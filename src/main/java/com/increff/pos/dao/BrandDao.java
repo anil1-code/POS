@@ -1,58 +1,47 @@
 package com.increff.pos.dao;
 
-import com.increff.pos.pojo.BrandMasterPojo;
+import com.increff.pos.pojo.BrandPojo;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
-public class BrandDao {
-    private static final String deleteById = "delete from BrandMasterPojo p where id=:id";
-    private static final String selectById = "select p from BrandMasterPojo p where id=:id";
-    private static final String selectByBrandCategory = "select p from BrandMasterPojo p where brandName=:brandName and categoryName=:categoryName";
-    private static final String selectAll = "select p from BrandMasterPojo p";
+public class BrandDao extends AbstractDao {
+    private static final String deleteById = "delete from BrandPojo p where id=:id";
+    private static final String selectById = "select p from BrandPojo p where id=:id";
+    private static final String selectByBrandCategory = "select p from BrandPojo p where brandName=:brandName and categoryName=:categoryName";
+    private static final String selectAll = "select p from BrandPojo p";
 
-    @PersistenceContext
-    public EntityManager em;
-
-    TypedQuery<BrandMasterPojo> getTypedQuery(String jpql) {
-        return em.createQuery(jpql, BrandMasterPojo.class);
-    }
-    Query getQuery(String jpql) {
-        return em.createQuery(jpql);
-    }
-    public List<BrandMasterPojo> getAll() {
-        TypedQuery<BrandMasterPojo> query = getTypedQuery(selectAll);
+    public List<BrandPojo> getAll() {
+        TypedQuery<BrandPojo> query = getQuery(selectAll, BrandPojo.class);
         return query.getResultList();
     }
-    public BrandMasterPojo getByBrandCategory(String brand, String category) {
-        TypedQuery<BrandMasterPojo> query = getTypedQuery(selectByBrandCategory);
+    public BrandPojo getByBrandCategory(String brand, String category) {
+        TypedQuery<BrandPojo> query = getQuery(selectByBrandCategory, BrandPojo.class);
         query.setParameter("brandName", brand);
         query.setParameter("categoryName", category);
-        return query.getSingleResult();
+        return getSingle(query);
     }
-    public BrandMasterPojo getById(int id) {
-        TypedQuery<BrandMasterPojo> query = getTypedQuery(selectById);
+    public BrandPojo getById(int id) {
+        TypedQuery<BrandPojo> query = getQuery(selectById, BrandPojo.class);
         query.setParameter("id", id);
-        return query.getSingleResult();
+        return getSingle(query);
     }
-    public BrandMasterPojo add(BrandMasterPojo brandMasterPojo) {
-        em.persist(brandMasterPojo);
-        return brandMasterPojo;
+    public BrandPojo add(BrandPojo brandPojo) {
+        em().persist(brandPojo);
+        return brandPojo;
     }
 
     public void delete(int id) {
-        Query query = getQuery(deleteById);
+        Query query = em().createQuery(deleteById);
         query.setParameter("id", id);
         query.executeUpdate();
     }
-    public BrandMasterPojo update(BrandMasterPojo brandMasterPojo) {
-        em.merge(brandMasterPojo);
-        return brandMasterPojo;
+    public BrandPojo update(BrandPojo brandPojo) {
+        em().merge(brandPojo);
+        return brandPojo;
     }
 
 }

@@ -1,9 +1,9 @@
 package com.increff.pos.controller;
 
 import com.increff.pos.dto.BrandDto;
-import com.increff.pos.model.data.BrandMasterData;
-import com.increff.pos.model.forms.BrandMasterForm;
-import com.increff.pos.pojo.BrandMasterPojo;
+import com.increff.pos.model.data.BrandData;
+import com.increff.pos.model.forms.BrandForm;
+import com.increff.pos.pojo.BrandPojo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,38 +13,35 @@ import java.util.List;
 
 @Api
 @RestController
-@RequestMapping(value = "/brands")
+@RequestMapping(value = "/api/brands")
 public class BrandController {
     @Autowired
     private BrandDto brandDto;
 
-    @ApiOperation(value = "getAll")
-    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
-    public List<BrandMasterData> getAllBrands() {
-        // call DTO to get this
+    @ApiOperation(value = "get all brand category pairs")
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<BrandData> getAllBrands() {
         return brandDto.getAll();
     }
 
-    @ApiOperation(value = "add")
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public BrandMasterPojo add(@RequestBody BrandMasterForm brandMasterForm) {
-        return brandDto.add(brandMasterForm);
+    @ApiOperation(value = "add a list of brand category pairs")
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public List<BrandPojo> add(@RequestBody List<BrandForm> brandFormList) {
+        return brandDto.add(brandFormList);
     }
 
-    @ApiOperation(value = "add multiple")
-    @RequestMapping(value = "/addMultiple", method = RequestMethod.POST)
-    public List<BrandMasterPojo> addMultiple(@RequestBody List<BrandMasterForm> brandMasterFormList) {
-        return brandDto.addMultiple(brandMasterFormList);
-    }
-
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public void delete(@RequestBody int id) {
+    @ApiOperation(value = "delete a brand category pair by id")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public void delete(@PathVariable int id) {
         brandDto.delete(id);
     }
 
+    @ApiOperation(value = "update a brand category pair by id")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
-    public BrandMasterPojo update(@PathVariable int id, @RequestBody BrandMasterForm brandMasterForm) {
-        return brandDto.update(id, brandMasterForm);
+    public BrandPojo update(@PathVariable int id, @RequestBody BrandForm brandForm) {
+        return brandDto.update(id, brandForm);
     }
 
 }
+
+// TODO: 24/08/22 : transactional issue for addMultiple

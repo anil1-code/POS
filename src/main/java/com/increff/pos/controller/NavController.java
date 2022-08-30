@@ -1,7 +1,6 @@
 package com.increff.pos.controller;
 
-import com.increff.pos.service.BrandMasterService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.increff.pos.model.InfoData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +40,7 @@ public class NavController {
 
     private ModelAndView mav(String page) {
         ModelAndView mav = new ModelAndView(page);
+        mav.addObject("info", new InfoData());
         mav.addObject("baseUrl", baseUrl);
         return mav;
     }

@@ -24,7 +24,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class ControllerConfig implements WebMvcConfigurer {
     public static final String PACKAGE_CONTROLLER = "com.increff.pos.controller";
 
-
     private ApplicationContext applicationContext;
 
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -75,6 +74,7 @@ public class ControllerConfig implements WebMvcConfigurer {
         resolver.setApplicationContext(applicationContext);
         resolver.setPrefix("/html/");
         resolver.setTemplateMode(TemplateMode.HTML);
+        resolver.setCacheable(false);
         return resolver;
     }
 

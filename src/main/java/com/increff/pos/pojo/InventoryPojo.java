@@ -14,7 +14,7 @@ import javax.persistence.Id;
 public class InventoryPojo {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private int productID;
+    private int productId;
     private int quantity;
 
 }
