@@ -35,13 +35,25 @@
                                 </div>
                             </th>
                             <th scope="col">
-                                <div class="form-group" id="add-brand-category-id">
-                                    <label for="inputId" class="col-form-label">Brand Category ID:</label>
-                                    <div class="input-text">
-                                        <input type="text" class="form-control" name="categoryId" id="inputId"
-                                            placeholder="Brand-category ID">
-                                    </div>
+                                <div style="margin-bottom: 15px;" class="form-group">
+                                    <select class="form-select" aria-label="Default select example" style="padding-top: 6px;
+                                        padding-right: 12px;
+                                        padding-bottom: 6px;
+                                        padding-left: 12px;
+                                        margin-top: -34px;
+                                        font-size: 14px;
+                                        width: fit-content;" id="brand_cat_id_dropdown">
+                                        <option selected>Select Brand Category</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
                                 </div>
+
+                            </th>
+
+                            <th scope="col">
+                                <div class="form-group" style="width: 100px;"></div>
                             </th>
                             <th scope="col">
                                 <div class="form-group" id="add-mrp">
@@ -68,7 +80,8 @@
                         <tr>
                             <th scope="col">Product Name</th>
                             <th scope="col">Product Barcode</th>
-                            <th scope="col">Brand-Category ID</th>
+                            <th scope="col">Brand</th>
+                            <th scope="col">Category</th>
                             <th scope="col">MRP</th>
                             <th scope="col">Actions</th>
                         </tr>
@@ -78,18 +91,18 @@
             </div>
         </div>
 
-        <!-- Employee Edit Modal -->
+        <!-- Product Edit Modal -->
         <div class="modal" tabindex="-1" role="dialog" id="edit-product-modal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Edit Product</h5>
+                        <p class="modal-title" style="font-size: large;">Edit Product</p>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form class="form-inline" id="product-edit-form">
+                        <form class="form-inline" id="product-edit-form" style="display: block;">
                             <div class="form-group">
                                 <label for="inputEditName" class="col-form-label">Name</label>
                                 <div class="input-text">
@@ -97,22 +110,24 @@
                                         placeholder="Enter product name" style="margin-left: 22px;">
                                 </div>
                             </div>
-
-                            <div class="form-group" id="bc-id-input" style="margin-top: 12px;">
-                                <label for="inputEditBcId" class="col-form-label">Category</label>
-                                <div class="input-text">
-                                    <input type="text" class="form-control" name="categoryId" id="inputEditBcId"
-                                        placeholder="Enter brand category id">
-                                </div>
-                            </div>
-
-
                             <div class="form-group" id="bc-id-input" style="margin-top: 12px;">
                                 <label for="inputEditMrp" class="col-form-label">Mrp</label>
                                 <div class="input-text">
                                     <input type="text" class="form-control" name="mrp" id="inputEditMrp"
                                         placeholder="Enter mrp" style="margin-left: 36px;">
                                 </div>
+                            </div>
+                            <div></div>
+                            <div style="margin-top: 12px;" class="form-group">
+                                <select class="form-select" aria-label="Default select example" style="padding-top: 6px;
+                                    padding-right: 12px;
+                                    padding-bottom: 6px;
+                                    padding-left: 12px;
+                                    margin-top: 4px;
+                                    font-size: 14px;
+                                    width: 400px;" id="brand_cat_id_edit_dropdown">
+                                    <option selected>Select Brand Category</option>
+                                </select>
                             </div>
                         </form>
                     </div>
@@ -130,10 +145,6 @@
 
 </body>
 
-<script>
-    const head_name = "Products";
-    highlightItem(head_name);
-    fetchAndDisplayProducts();
-</script>
+<script src="static/products.js"></script>
 
 </html>

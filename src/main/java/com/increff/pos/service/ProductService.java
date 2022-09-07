@@ -19,7 +19,7 @@ public class ProductService {
 
     @Transactional(rollbackFor = ApiException.class)
     public List<ProductPojo> add(List<ProductPojo> productPojoList) {
-        List<ProductPojo> addedProductPojo = new ArrayList<>();
+        List<ProductPojo> addedProductPojoList = new ArrayList<>();
         for (ProductPojo productPojo : productPojoList) {
             if (productDao.getByBarcode(productPojo.getBarcode()) != null) {
                 throw new ApiException("This barcode already exists for a product");
@@ -27,9 +27,9 @@ public class ProductService {
             if (!brandService.exists(productPojo.getBrandCategory())) {
                 throw new ApiException("This brand category doesn't exists");
             }
-            addedProductPojo.add(productDao.add(productPojo));
+            addedProductPojoList.add(productDao.add(productPojo));
         }
-        return addedProductPojo;
+        return addedProductPojoList;
     }
 
     @Transactional(readOnly = true)
@@ -55,5 +55,9 @@ public class ProductService {
         existingPojo.setName(productPojo.getName());
         existingPojo.setMrp(productPojo.getMrp());
         return productDao.update(existingPojo);
+    }
+
+    public boolean exists(int id) {
+        return productDao.getById(id) != null;
     }
 }

@@ -1,5 +1,6 @@
 package com.increff.pos.dto;
 
+import com.increff.pos.dto.helper.ProductDtoHelper;
 import com.increff.pos.model.data.ProductData;
 import com.increff.pos.model.forms.ProductForm;
 import com.increff.pos.pojo.ProductPojo;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.increff.pos.dto.helper.ProductDtoHelper.*;
 
 @Component
 public class ProductDto {
@@ -19,14 +19,14 @@ public class ProductDto {
 
     public List<ProductData> getAll() {
         List<ProductPojo> productPojoList = productService.getAll();
-        return convertToProductDataList(productPojoList);
+        return ProductDtoHelper.convertToProductDataList(productPojoList);
     }
 
     public List<ProductPojo> add(List<ProductForm> productFormList) {
         List<ProductPojo> productPojoList = new ArrayList<>();
-        for(ProductForm productForm : productFormList) {
-            normalize(productForm);
-            productPojoList.add(convertToPojo(productForm));
+        for (ProductForm productForm : productFormList) {
+            ProductDtoHelper.normalize(productForm);
+            productPojoList.add(ProductDtoHelper.convertToPojo(productForm));
         }
         return productService.add(productPojoList);
     }
@@ -36,8 +36,8 @@ public class ProductDto {
     }
 
     public ProductPojo update(int id, ProductForm productForm) {
-        normalize(productForm);
-        ProductPojo productPojo = convertToPojo(productForm);
+        ProductDtoHelper.normalize(productForm);
+        ProductPojo productPojo = ProductDtoHelper.convertToPojo(productForm);
         return productService.update(id, productPojo);
     }
 }

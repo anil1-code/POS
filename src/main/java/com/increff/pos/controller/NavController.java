@@ -45,35 +45,4 @@ public class NavController {
         return mav;
     }
 
-    /*
-    * serves the request for the following:
-    * add a brand to the database
-    * add multiple brands using tsv file
-    * delete a brand using id
-    * get all brands
-    * updating a brand using id
-    *
-
-    public void addBrand(BrandMasterPOJO) {
-
-    }
-
-    public void addBrandList() {
-
-    }
-
-    public void delete(@PathVariable int id) {
-
-    }
-
-    public List<BrandMasterPOJO> getBrands() {
-
-    }
-
-    public void update(int id, BrandMasterPOJO brandMaster) {
-
-    }
-    */
-
-
 }

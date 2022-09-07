@@ -35,3 +35,6 @@
 .form-group {
     display: flex;
 }
+option{
+    font-size: 14px;
+}

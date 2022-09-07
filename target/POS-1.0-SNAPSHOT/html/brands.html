@@ -28,7 +28,7 @@
                                     <label for="inputName" class="col-form-label">Name</label>
                                     <div class="input-text">
                                         <input type="text" class="form-control" name="brandName" id="inputName"
-                                            placeholder="Enter brand name">
+                                            placeholder="Enter brand name" maxlength="50">
                                     </div>
                                 </div>
                             </th>
@@ -37,7 +37,7 @@
                                     <label for="inputCat" class="col-form-label">Category</label>
                                     <div class="input-text">
                                         <input type="text" class="form-control" name="categoryName" id="inputCat"
-                                            placeholder="Enter brand category">
+                                            placeholder="Enter brand category" maxlength="50">
                                     </div>
                                 </div>
                             </th>
@@ -47,7 +47,7 @@
                                         onclick="addBrand()">Add</button>
                                     &nbsp;
                                     <button type="button" class="btn btn-primary" id="refresh-data"
-                                        onclick="fetchAndDisplayData()">Refresh</button>
+                                        onclick="fetchAndDisplayBrands()">Refresh</button>
                                 </div>
                             </th>
                         </tr>
@@ -64,12 +64,12 @@
             </div>
         </div>
 
-        <!-- Employee Edit Modal -->
+        <!-- Brand Edit Modal -->
         <div class="modal" tabindex="-1" role="dialog" id="edit-brand-modal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Edit Brand</h5>
+                        <p class="modal-title" style="font-size: large;">Edit Brand</p>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -80,7 +80,7 @@
                                 <label for="inputEditName" class="col-form-label">Name</label>
                                 <div class="input-text">
                                     <input type="text" class="form-control" name="brandName" id="inputEditName"
-                                        placeholder="Enter brand name" style="margin-left: 22px;">
+                                        placeholder="Enter brand name" maxlength="50" style="margin-left: 22px;">
                                 </div>
                             </div>
 
@@ -88,7 +88,7 @@
                                 <label for="inputEditCat" class="col-form-label">Category</label>
                                 <div class="input-text">
                                     <input type="text" class="form-control" name="categoryName" id="inputEditCat"
-                                        placeholder="Enter brand category">
+                                        maxlength="50" placeholder="Enter brand category">
                                 </div>
                             </div>
                         </form>
@@ -100,17 +100,11 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <footer th:replace="templates.html :: common_footer"></footer>
 
 </body>
 
-<script>
-    const head_name = "Brands";
-    highlightItem(head_name);
-    fetchAndDisplayBrands();
-</script>
-
+<script src="static/brands.js"></script>
 </html>

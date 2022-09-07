@@ -10,39 +10,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDtoHelper {
-    public static List<ProductData> convertToProductDataList(List<ProductPojo> productMasterPojoList){
-        List<ProductData> productMasterDataList = new ArrayList<>();
-        for(ProductPojo productMasterPojo : productMasterPojoList) {
-            ProductData productMasterData = convertToData(productMasterPojo);
-            productMasterDataList.add(productMasterData);
+    public static List<ProductData> convertToProductDataList(List<ProductPojo> productPojoList){
+        List<ProductData> productDataList = new ArrayList<>();
+        for(ProductPojo productPojo : productPojoList) {
+            ProductData productData = convertToData(productPojo);
+            productDataList.add(productData);
         }
-        return productMasterDataList;
+        return productDataList;
     }
 
-    public static void normalize(ProductForm productMasterForm) {
-        if(StringUtil.isEmpty(productMasterForm.getBarcode()) || StringUtil.isEmpty(productMasterForm.getName())) {
+    public static void normalize(ProductForm productForm) {
+        if(StringUtil.isEmpty(productForm.getBarcode()) || StringUtil.isEmpty(productForm.getName())) {
             throw new ApiException("Barcode and Name cannot be empty");
         }
-        productMasterForm.setName(StringUtil.trimAndLowerCase(productMasterForm.getName()));
-        productMasterForm.setBarcode(StringUtil.trimAndLowerCase(productMasterForm.getBarcode()));
+        productForm.setName(StringUtil.trimAndLowerCase(productForm.getName()));
+        productForm.setBarcode(StringUtil.trimAndLowerCase(productForm.getBarcode()));
     }
 
-    public static ProductData convertToData(ProductPojo productMasterPojo) {
-        ProductData productMasterData = new ProductData();
-        productMasterData.setId(productMasterPojo.getId());
-        productMasterData.setName(productMasterPojo.getName());
-        productMasterData.setMrp(productMasterPojo.getMrp());
-        productMasterData.setBrandCategory(productMasterPojo.getBrandCategory());
-        productMasterData.setBarcode(productMasterPojo.getBarcode());
-        return productMasterData;
+    private static ProductData convertToData(ProductPojo productPojo) {
+        ProductData productData = new ProductData();
+        productData.setId(productPojo.getId());
+        productData.setName(productPojo.getName());
+        productData.setMrp(productPojo.getMrp());
+        productData.setBrandCategory(productPojo.getBrandCategory());
+        productData.setBarcode(productPojo.getBarcode());
+        return productData;
     }
 
-    public static ProductPojo convertToPojo(ProductForm productMasterForm) {
-        ProductPojo productMasterPojo = new ProductPojo();
-        productMasterPojo.setBarcode(productMasterForm.getBarcode());
-        productMasterPojo.setName(productMasterForm.getName());
-        productMasterPojo.setMrp(productMasterForm.getMrp());
-        productMasterPojo.setBrandCategory(productMasterForm.getBrandCategory());
-        return productMasterPojo;
+    public static ProductPojo convertToPojo(ProductForm productForm) {
+        ProductPojo productPojo = new ProductPojo();
+        productPojo.setBarcode(productForm.getBarcode());
+        productPojo.setName(productForm.getName());
+        productPojo.setMrp(productForm.getMrp());
+        productPojo.setBrandCategory(productForm.getBrandCategory());
+        return productPojo;
     }
 }
