@@ -18,17 +18,20 @@ public class BrandDao extends AbstractDao {
         TypedQuery<BrandPojo> query = getQuery(selectAll, BrandPojo.class);
         return query.getResultList();
     }
+
     public BrandPojo getByBrandCategory(String brand, String category) {
         TypedQuery<BrandPojo> query = getQuery(selectByBrandCategory, BrandPojo.class);
         query.setParameter("brandName", brand);
         query.setParameter("categoryName", category);
         return getSingle(query);
     }
+
     public BrandPojo getById(int id) {
         TypedQuery<BrandPojo> query = getQuery(selectById, BrandPojo.class);
         query.setParameter("id", id);
         return getSingle(query);
     }
+
     public BrandPojo add(BrandPojo brandPojo) {
         em().persist(brandPojo);
         return brandPojo;
@@ -39,6 +42,7 @@ public class BrandDao extends AbstractDao {
         query.setParameter("id", id);
         query.executeUpdate();
     }
+
     public BrandPojo update(BrandPojo brandPojo) {
         em().merge(brandPojo);
         return brandPojo;

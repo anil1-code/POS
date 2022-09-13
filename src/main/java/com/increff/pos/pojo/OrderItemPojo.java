@@ -14,10 +14,9 @@ import javax.persistence.Id;
 public class OrderItemPojo {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private int id;
-    private int orderId;
-    private int productId;
-    private int quantity;
-    private double sellingPrice; // per piece
-
+    private Integer id;
+    private Integer orderId;
+    private Integer productId;
+    private Integer quantity;
+    private Double sellingPrice; // per piece
 }

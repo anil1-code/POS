@@ -1,12 +1,14 @@
 package com.increff.pos.dto;
 
 import com.increff.pos.dto.helper.BrandDtoHelper;
+import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.BrandData;
 import com.increff.pos.model.forms.BrandForm;
 import com.increff.pos.pojo.BrandPojo;
 import com.increff.pos.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,30 +19,44 @@ public class BrandDto {
     @Autowired
     public BrandService brandService;
 
-    public List<BrandPojo> add(List<BrandForm> brandFormList) {
-        List<BrandPojo> brandPojoList = new ArrayList<>();
+    @Transactional(rollbackFor = ApiException.class)
+    public List<BrandPojo> add(List<BrandForm> brandFormList) throws ApiException {
+        List<BrandPojo> addedPojoList = new ArrayList<>();
+        StringBuilder errorMessageData = new StringBuilder();
+        int row = 0;
+        boolean isBulkAdd = brandFormList.size() > 1; // will be true if the data was sent via tsv
         for (BrandForm brandForm : brandFormList) {
-            BrandDtoHelper.normalize(brandForm);
-            brandPojoList.add(BrandDtoHelper.convertToPojo(brandForm));
+            try {
+                BrandDtoHelper.normalize(brandForm);
+                BrandPojo addedPojo = brandService.add(BrandDtoHelper.convertToPojo(brandForm));
+                addedPojoList.add(addedPojo);
+            } catch (ApiException e) {
+                errorMessageData.append(isBulkAdd ? ("row " + row + ": ") : "").append(e.getMessage()); // append this exception message
+            }
+            row++;
         }
-        return brandService.add(brandPojoList);
+        if (errorMessageData.length() != 0) {
+            throw new ApiException(errorMessageData.toString());
+        }
+        return addedPojoList;
     }
 
     public List<BrandData> getAll() {
         List<BrandPojo> brandPojoList = brandService.getAll();
-        List<BrandData> brandDataList = new ArrayList<>();
-        for (BrandPojo brandPojo : brandPojoList) {
-            BrandData brandData = BrandDtoHelper.convertToData(brandPojo);
-            brandDataList.add(brandData);
-        }
-        return brandDataList;
+        return BrandDtoHelper.convertToDataList(brandPojoList);
+    }
+
+    @Transactional(readOnly = true)
+    public BrandData get(int id) {
+        BrandPojo brandPojo = brandService.getById(id);
+        return BrandDtoHelper.convertToData(brandPojo);
     }
 
     public void delete(int id) {
         brandService.delete(id);
     }
 
-    public BrandPojo update(int id, BrandForm brandForm) {
+    public BrandPojo update(int id, BrandForm brandForm) throws ApiException {
         BrandDtoHelper.normalize(brandForm);
         BrandPojo brandPojo = BrandDtoHelper.convertToPojo(brandForm);
         return brandService.update(id, brandPojo);

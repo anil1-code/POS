@@ -10,24 +10,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDtoHelper {
-    public static List<ProductData> convertToProductDataList(List<ProductPojo> productPojoList){
+
+    private static final int MAX_LENGTH = 50; // While changing this, also change the maxLength attribute of the input field in frontend
+
+    public static List<ProductData> convertToProductDataList(List<ProductPojo> productPojoList) {
         List<ProductData> productDataList = new ArrayList<>();
-        for(ProductPojo productPojo : productPojoList) {
+        for (ProductPojo productPojo : productPojoList) {
             ProductData productData = convertToData(productPojo);
             productDataList.add(productData);
         }
         return productDataList;
     }
 
-    public static void normalize(ProductForm productForm) {
-        if(StringUtil.isEmpty(productForm.getBarcode()) || StringUtil.isEmpty(productForm.getName())) {
-            throw new ApiException("Barcode and Name cannot be empty");
+    public static void normalize(ProductForm productForm) throws ApiException {
+        StringBuilder errorMsg = new StringBuilder("");
+        if (StringUtil.isEmpty(productForm.getName())) {
+            errorMsg.append("Product name cannot be empty. ");
+        }
+        if (StringUtil.isEmpty(productForm.getBarcode())) {
+            errorMsg.append("Product barcode cannot be empty. ");
+        }
+        if (productForm.getName().length() > MAX_LENGTH) {
+            errorMsg.append("Product name should not exceed the maximum length(" + MAX_LENGTH + "). ");
+        }
+        if (productForm.getBarcode().length() > MAX_LENGTH) {
+            errorMsg.append("Product barcode should not exceed the maximum length(" + MAX_LENGTH + "). ");
+        }
+        if (productForm.getMrp() == 0) {
+            errorMsg.append("Product MRP cannot be 0. ");
+        }
+        if (errorMsg.length() != 0) {
+            throw new ApiException(errorMsg + "\n");
         }
         productForm.setName(StringUtil.trimAndLowerCase(productForm.getName()));
         productForm.setBarcode(StringUtil.trimAndLowerCase(productForm.getBarcode()));
     }
 
-    private static ProductData convertToData(ProductPojo productPojo) {
+    public static ProductData convertToData(ProductPojo productPojo) {
         ProductData productData = new ProductData();
         productData.setId(productPojo.getId());
         productData.setName(productPojo.getName());

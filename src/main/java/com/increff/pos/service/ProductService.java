@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,19 +16,14 @@ public class ProductService {
     @Autowired
     private BrandService brandService;
 
-    @Transactional(rollbackFor = ApiException.class)
-    public List<ProductPojo> add(List<ProductPojo> productPojoList) {
-        List<ProductPojo> addedProductPojoList = new ArrayList<>();
-        for (ProductPojo productPojo : productPojoList) {
-            if (productDao.getByBarcode(productPojo.getBarcode()) != null) {
-                throw new ApiException("This barcode already exists for a product");
-            }
-            if (!brandService.exists(productPojo.getBrandCategory())) {
-                throw new ApiException("This brand category doesn't exists");
-            }
-            addedProductPojoList.add(productDao.add(productPojo));
+    public ProductPojo add(ProductPojo productPojo) throws ApiException {
+        if (productDao.getByBarcode(productPojo.getBarcode()) != null) {
+            throw new ApiException("This barcode already exists for a product");
         }
-        return addedProductPojoList;
+        if (brandService.getById(productPojo.getBrandCategory()) == null) {
+            throw new ApiException("This brand category doesn't exists");
+        }
+        return productDao.add(productPojo);
     }
 
     @Transactional(readOnly = true)
@@ -43,12 +37,12 @@ public class ProductService {
     }
 
     @Transactional(rollbackFor = ApiException.class)
-    public ProductPojo update(int id, ProductPojo productPojo) {
+    public ProductPojo update(int id, ProductPojo productPojo) throws ApiException {
         ProductPojo existingPojo = productDao.getById(id);
         if (existingPojo == null) {
             throw new ApiException("No entry exists for this ID: " + id);
         }
-        if (!brandService.exists(productPojo.getBrandCategory())) {
+        if (brandService.getById(productPojo.getBrandCategory()) == null) {
             throw new ApiException("This brand category doesn't exists");
         }
         existingPojo.setBrandCategory(productPojo.getBrandCategory());
@@ -57,7 +51,7 @@ public class ProductService {
         return productDao.update(existingPojo);
     }
 
-    public boolean exists(int id) {
-        return productDao.getById(id) != null;
+    public ProductPojo getById(int id) {
+        return productDao.getById(id);
     }
 }

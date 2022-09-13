@@ -11,12 +11,16 @@ public class InventoryDtoHelper {
     public static List<InventoryData> convertToInventoryDataList(List<InventoryPojo> inventoryPojoList) {
         List<InventoryData> inventoryDataList = new ArrayList<>();
         for (InventoryPojo inventoryPojo : inventoryPojoList) {
-            InventoryData inventoryData = new InventoryData();
-            inventoryData.setProductId(inventoryPojo.getProductId());
-            inventoryData.setQuantity(inventoryPojo.getQuantity());
-            inventoryDataList.add(inventoryData);
+            inventoryDataList.add(convertToInventoryData(inventoryPojo));
         }
         return inventoryDataList;
+    }
+
+    public static InventoryData convertToInventoryData(InventoryPojo inventoryPojo) {
+        InventoryData inventoryData = new InventoryData();
+        inventoryData.setProductId(inventoryPojo.getProductId());
+        inventoryData.setQuantity(inventoryPojo.getQuantity());
+        return inventoryData;
     }
 
     public static InventoryPojo convertToPojo(InventoryForm inventoryForm) {

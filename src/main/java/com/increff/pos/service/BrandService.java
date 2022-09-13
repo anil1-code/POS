@@ -20,17 +20,11 @@ public class BrandService {
         return brandDao.getAll();
     }
 
-    @Transactional(rollbackFor = ApiException.class)
-    public List<BrandPojo> add(List<BrandPojo> brandPojoList) {
-        List<BrandPojo> addedPojoList = new ArrayList<>();
-        for(BrandPojo brandPojo : brandPojoList) {
-            if (exists(brandPojo.getBrandName(), brandPojo.getCategoryName())) {
-                throw new ApiException("This brand category combination already exists");
-            }
-            BrandPojo addedPojo = brandDao.add(brandPojo);
-            addedPojoList.add(addedPojo);
+    public BrandPojo add(BrandPojo brandPojo) throws ApiException {
+        if (exists(brandPojo.getBrandName(), brandPojo.getCategoryName())) {
+            throw new ApiException("This brand category combination already exists(If this was a bulk transaction, make sure this row is not coming twice in the same file).\n");
         }
-        return addedPojoList;
+        return brandDao.add(brandPojo);
     }
 
     @Transactional(rollbackFor = ApiException.class)
@@ -39,7 +33,7 @@ public class BrandService {
     }
 
     @Transactional(rollbackFor = ApiException.class)
-    public BrandPojo update(int id, BrandPojo brandPojo) {
+    public BrandPojo update(int id, BrandPojo brandPojo) throws ApiException {
         BrandPojo existingPojo = brandDao.getById(id);
         if (existingPojo == null) {
             throw new ApiException("No entry exists for this ID :" + id);
@@ -57,8 +51,8 @@ public class BrandService {
         return brandPojo != null;
     }
 
-    public boolean exists(int id) {
-        BrandPojo brandPojo = brandDao.getById(id);
-        return brandPojo != null;
+    public BrandPojo getById(int id) {
+        return brandDao.getById(id);
     }
+
 }

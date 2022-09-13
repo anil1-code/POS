@@ -1,6 +1,6 @@
 package com.increff.pos.controller;
 
-import com.increff.pos.model.InfoData;
+import com.increff.pos.model.data.InfoData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

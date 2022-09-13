@@ -8,14 +8,6 @@
     <nav th:replace="templates.html :: common_navbar"></nav>
 
     <div class="container">
-        <!-- Top row with form-->
-        <div class="row">
-            <div class="col-12">
-                <form class="form-inline" id="brand-form">
-
-                </form>
-            </div>
-        </div>
 
         <div class="row">
             <!-- Table -->
@@ -46,13 +38,15 @@
                                     <button type="button" class="btn btn-primary" id="add-brand"
                                         onclick="addBrand()">Add</button>
                                     &nbsp;
-                                    <button type="button" class="btn btn-primary" id="refresh-data"
-                                        onclick="fetchAndDisplayBrands()">Refresh</button>
+                                    <button type="button" class="btn btn-primary" id="add-brand"
+                                        onclick="showBulkUploadDialog()">Bulk Add</button>
+                                    &nbsp;
+                                    <button type="button" class="btn btn-circle btn-sm glyphicon glyphicon-refresh"
+                                        id="refresh-data" onclick="fetchAndDisplayBrands()"></button>
                                 </div>
                             </th>
                         </tr>
                     </thead>
-                    
                     <tbody>
                         <tr>
                             <th scope="col">Brand Name</th>
@@ -62,6 +56,36 @@
                     </tbody>
                 </table>
 
+            </div>
+        </div>
+
+
+        <!-- Brand Bulk Upload Modal -->
+        <div class="modal" tabindex="-1" role="dialog" id="brand-bulk-upload-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p class="modal-title" style="font-size: large;">Upload Brands via file</p>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="brands-file">
+                            <input type="file" class="custom-file-input" id="brandFile">
+                            <label class="custom-file-label" for="brandFile" id="brandFileName">Choose
+                                file</label>
+                        </div>
+                        <a href="static/brands.tsv" target="_blank">Download Sample</a>
+                        <br>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="process-brand-data"
+                            onclick="processData()">Upload</button>
+                        <button type="button" class="btn btn-warning" id="download-errors" onclick="downloadErrors()">Download Errors</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -108,4 +132,5 @@
 </body>
 
 <script src="static/brands.js"></script>
+
 </html>

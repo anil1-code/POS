@@ -5,9 +5,8 @@ import com.increff.pos.exception.ApiException;
 import com.increff.pos.pojo.InventoryPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,34 +16,34 @@ public class InventoryService {
     @Autowired
     private ProductService productService;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<InventoryPojo> getAll() {
         return inventoryDao.getAll();
     }
 
-    @Transactional
-    public List<InventoryPojo> add(List<InventoryPojo> inventoryPojoList) {
-        List<InventoryPojo> addedInventoryPojoList = new ArrayList<>();
-        for (InventoryPojo inventoryPojo : inventoryPojoList) {
-            if(inventoryDao.getByProductId(inventoryPojo.getProductId()) != null) {
-                throw new ApiException("You have already added this inventory, please update that instead");
-            }
-            if(!productService.exists(inventoryPojo.getProductId())) {
-                throw new ApiException("You haven't added this product yet, please add that first");
-            }
-            addedInventoryPojoList.add(inventoryDao.add(inventoryPojo));
-        }
-        return addedInventoryPojoList;
+    public InventoryPojo getByProductId(int id) {
+        return inventoryDao.getByProductId(id);
     }
 
-    @Transactional
+    public InventoryPojo add(InventoryPojo inventoryPojo) throws ApiException {
+        if (productService.getById(inventoryPojo.getProductId()) == null) {
+            throw new ApiException("You haven't added this product yet, please add that first. ");
+        }
+        if (inventoryDao.getByProductId(inventoryPojo.getProductId()) != null) {
+            throw new ApiException("You have already added this inventory, please update that instead. ");
+        }
+        return inventoryDao.add(inventoryPojo);
+    }
+
+    @Transactional(rollbackFor = ApiException.class)
     public void delete(int id) {
         inventoryDao.delete(id);
     }
-    @Transactional
-    public InventoryPojo update(int productId, InventoryPojo inventoryPojo) {
+
+    @Transactional(rollbackFor = ApiException.class)
+    public InventoryPojo update(int productId, InventoryPojo inventoryPojo) throws ApiException {
         InventoryPojo existingPojo = inventoryDao.getByProductId(productId);
-        if(existingPojo == null) {
+        if (existingPojo == null) {
             throw new ApiException("This inventory has not been added, please add instead.");
         }
         existingPojo.setQuantity(inventoryPojo.getQuantity());
