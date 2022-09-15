@@ -13,8 +13,6 @@ import java.util.List;
 public class InventoryService {
     @Autowired
     private InventoryDao inventoryDao;
-    @Autowired
-    private ProductService productService;
 
     @Transactional(readOnly = true)
     public List<InventoryPojo> getAll() {
@@ -26,9 +24,6 @@ public class InventoryService {
     }
 
     public InventoryPojo add(InventoryPojo inventoryPojo) throws ApiException {
-        if (productService.getById(inventoryPojo.getProductId()) == null) {
-            throw new ApiException("You haven't added this product yet, please add that first. ");
-        }
         if (inventoryDao.getByProductId(inventoryPojo.getProductId()) != null) {
             throw new ApiException("You have already added this inventory, please update that instead. ");
         }

@@ -4,8 +4,11 @@ import com.increff.pos.dto.helper.OrderItemDtoHelper;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.OrderItemData;
 import com.increff.pos.model.forms.OrderItemForm;
+import com.increff.pos.pojo.InventoryPojo;
 import com.increff.pos.pojo.OrderItemPojo;
+import com.increff.pos.service.InventoryService;
 import com.increff.pos.service.OrderItemService;
+import com.increff.pos.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,10 @@ import java.util.List;
 public class OrderItemDto {
     @Autowired
     private OrderItemService orderItemService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private InventoryService inventoryService;
 
     public List<OrderItemData> getAll() {
         return OrderItemDtoHelper.convertPojoListToDataList(orderItemService.getAll());
@@ -27,6 +34,15 @@ public class OrderItemDto {
             errorMessageData.append("\n");
             throw new ApiException(errorMessageData.toString());
         }
+        if (productService.getById(orderItemForm.getProductId()) == null) {
+            // product doesn't exists
+            throw new ApiException("This product doesn't exist.\n");
+        }
+        InventoryPojo inventoryPojo = inventoryService.getByProductId(orderItemForm.getProductId());
+        if (inventoryPojo == null || inventoryPojo.getQuantity() < orderItemForm.getQuantity()) {
+            // inventory isn't sufficient
+            throw new ApiException("Inventory is insufficient.\n");
+        }
         return orderItemService.add(OrderItemDtoHelper.convertFormToPojo(orderItemForm));
     }
 
@@ -36,12 +52,19 @@ public class OrderItemDto {
             errorMessageData.append("\n");
             throw new ApiException(errorMessageData.toString());
         }
+        if (productService.getById(orderItemForm.getProductId()) == null) {
+            throw new ApiException("This product doesn't exist.\n");
+        }
+        InventoryPojo inventoryPojo = inventoryService.getByProductId(orderItemForm.getProductId());
+        if (inventoryPojo == null || inventoryPojo.getQuantity() < orderItemForm.getQuantity()) {
+            throw new ApiException("Inventory is insufficient.\n");
+        }
         return orderItemService.update(id, OrderItemDtoHelper.convertFormToPojo(orderItemForm));
     }
 
     @Transactional(readOnly = true)
     public List<OrderItemData> getByOrderId(int orderId) {
-        return orderItemService.getByOrderId(orderId);
+        return OrderItemDtoHelper.convertPojoListToDataList(orderItemService.getByOrderId(orderId));
     }
 
     public void delete(int id) {

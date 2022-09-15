@@ -16,11 +16,11 @@ public class ProductPojo {
     * */
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @NotNull
     private String barcode;
-    private int brandCategory;
+    private Integer brandCategory;
     private String name;
 
-    private double mrp;
+    private Double mrp;
 }

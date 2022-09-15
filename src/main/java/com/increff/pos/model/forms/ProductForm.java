@@ -9,8 +9,8 @@ import lombok.Setter;
 public class ProductForm {
     @NotNull
     private String barcode;
-    private int brandCategory;
+    private Integer brandCategory;
     @NotNull
     private String name;
-    private double mrp;
+    private Double mrp;
 }

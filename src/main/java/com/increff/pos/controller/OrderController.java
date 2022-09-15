@@ -28,7 +28,9 @@ public class OrderController {
     @ApiOperation(value = "get all existing orders")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<OrderData> getAll() {
-        return orderDto.getAll();
+        List<OrderData> lst = orderDto.getAll();
+        System.out.println(lst.size() + "sdfs");
+        return lst;
     }
 
     @ApiOperation(value = "generate the invoice")

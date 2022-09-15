@@ -13,15 +13,10 @@ import java.util.List;
 public class ProductService {
     @Autowired
     private ProductDao productDao;
-    @Autowired
-    private BrandService brandService;
 
     public ProductPojo add(ProductPojo productPojo) throws ApiException {
         if (productDao.getByBarcode(productPojo.getBarcode()) != null) {
             throw new ApiException("This barcode already exists for a product");
-        }
-        if (brandService.getById(productPojo.getBrandCategory()) == null) {
-            throw new ApiException("This brand category doesn't exists");
         }
         return productDao.add(productPojo);
     }
@@ -41,9 +36,6 @@ public class ProductService {
         ProductPojo existingPojo = productDao.getById(id);
         if (existingPojo == null) {
             throw new ApiException("No entry exists for this ID: " + id);
-        }
-        if (brandService.getById(productPojo.getBrandCategory()) == null) {
-            throw new ApiException("This brand category doesn't exists");
         }
         existingPojo.setBrandCategory(productPojo.getBrandCategory());
         existingPojo.setName(productPojo.getName());

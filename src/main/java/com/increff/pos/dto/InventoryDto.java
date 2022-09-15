@@ -6,6 +6,7 @@ import com.increff.pos.model.data.InventoryData;
 import com.increff.pos.model.forms.InventoryForm;
 import com.increff.pos.pojo.InventoryPojo;
 import com.increff.pos.service.InventoryService;
+import com.increff.pos.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,9 @@ public class InventoryDto {
 
     @Autowired
     private InventoryService inventoryService;
+    @Autowired
+    private ProductService productService;
+    private final static int MAX_ROWS = 5000;
 
     public List<InventoryData> getAll() {
         List<InventoryPojo> inventoryPojoList = inventoryService.getAll();
@@ -31,12 +35,18 @@ public class InventoryDto {
 
     @Transactional(rollbackFor = ApiException.class)
     public List<InventoryPojo> add(List<InventoryForm> inventoryFormList) throws ApiException {
+        if (inventoryFormList.size() > MAX_ROWS) {
+            throw new ApiException("number of rows exceeds the limit");
+        }
         List<InventoryPojo> addedPojoList = new ArrayList<>();
         StringBuilder errorMessageData = new StringBuilder();
         int row = 0;
         boolean isBulkAdd = inventoryFormList.size() > 1;
-        for(InventoryForm inventoryForm : inventoryFormList) {
+        for (InventoryForm inventoryForm : inventoryFormList) {
             try {
+                if (productService.getById(inventoryForm.getProductId()) == null) {
+                    throw new ApiException("You haven't added this product yet, please add that first. ");
+                }
                 InventoryPojo addedPojo = inventoryService.add(InventoryDtoHelper.convertToPojo(inventoryForm));
                 addedPojoList.add(addedPojo);
             } catch (ApiException e) {
@@ -44,7 +54,7 @@ public class InventoryDto {
             }
             row++;
         }
-        if(errorMessageData.length() != 0) {
+        if (errorMessageData.length() != 0) {
             throw new ApiException(errorMessageData.toString());
         }
         return addedPojoList;

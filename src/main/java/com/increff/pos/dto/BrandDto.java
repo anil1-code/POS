@@ -19,11 +19,16 @@ public class BrandDto {
     @Autowired
     public BrandService brandService;
 
+    private final static int MAX_ROWS = 5000;
+
     @Transactional(rollbackFor = ApiException.class)
     public List<BrandPojo> add(List<BrandForm> brandFormList) throws ApiException {
+        if(brandFormList.size() > MAX_ROWS) {
+            throw new ApiException("number of rows exceeds the limit");
+        }
         List<BrandPojo> addedPojoList = new ArrayList<>();
         StringBuilder errorMessageData = new StringBuilder();
-        int row = 0;
+        int row = 1;
         boolean isBulkAdd = brandFormList.size() > 1; // will be true if the data was sent via tsv
         for (BrandForm brandForm : brandFormList) {
             try {
@@ -47,8 +52,11 @@ public class BrandDto {
     }
 
     @Transactional(readOnly = true)
-    public BrandData get(int id) {
+    public BrandData get(int id) throws ApiException {
         BrandPojo brandPojo = brandService.getById(id);
+        if(brandPojo == null) {
+            throw new ApiException("Does not exist");
+        }
         return BrandDtoHelper.convertToData(brandPojo);
     }
 

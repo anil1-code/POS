@@ -16,6 +16,6 @@ public class OrderPojo {
     * this represents a single order(may contain multiple OrderItems) placed by a user at the given point of time
     * */
     @Id
-    private int id;
+    private Integer id;
     private ZonedDateTime zonedDateTime;
 }

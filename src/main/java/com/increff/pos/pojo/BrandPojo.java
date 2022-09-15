@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class BrandPojo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String brandName;
     private String categoryName;
 }

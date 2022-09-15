@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,7 +21,7 @@ public class BrandService {
 
     public BrandPojo add(BrandPojo brandPojo) throws ApiException {
         if (exists(brandPojo.getBrandName(), brandPojo.getCategoryName())) {
-            throw new ApiException("This brand category combination already exists(If this was a bulk transaction, make sure this row is not coming twice in the same file).\n");
+            throw new ApiException("Already exists.\n");
         }
         return brandDao.add(brandPojo);
     }
@@ -36,10 +35,10 @@ public class BrandService {
     public BrandPojo update(int id, BrandPojo brandPojo) throws ApiException {
         BrandPojo existingPojo = brandDao.getById(id);
         if (existingPojo == null) {
-            throw new ApiException("No entry exists for this ID :" + id);
+            throw new ApiException("No row exists for this ID :" + id);
         }
         if (exists(brandPojo.getBrandName(), brandPojo.getCategoryName())) {
-            throw new ApiException("This brand category combination already exists");
+            throw new ApiException("Already exists"); // what if it(bc) was same
         }
         existingPojo.setBrandName(brandPojo.getBrandName());
         existingPojo.setCategoryName(brandPojo.getCategoryName());

@@ -33,7 +33,7 @@ public class BrandController {
 
     @ApiOperation(value = "get the brand category corresponding to the id given")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public BrandData getById(@PathVariable int id) {
+    public BrandData getById(@PathVariable int id) throws ApiException {
         return brandDto.get(id);
     }
 

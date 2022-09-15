@@ -3,7 +3,6 @@ package com.increff.pos.service;
 import com.increff.pos.dao.OrderDao;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.InvoiceData;
-import com.increff.pos.model.data.OrderItemData;
 import com.increff.pos.pojo.OrderPojo;
 import org.apache.fop.apps.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,21 +24,16 @@ import java.util.List;
 public class OrderService {
     @Autowired
     private OrderDao orderDao;
-    @Autowired
-    private OrderItemService orderItemService;
     private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
-    @Transactional(rollbackFor = ApiException.class)
-    public OrderPojo add(OrderPojo orderPojo, List<Integer> orderItemIds) throws ApiException {
+    public OrderPojo add(OrderPojo orderPojo) throws ApiException {
         orderDao.add(orderPojo);
-        for (Integer id : orderItemIds) {
-            orderItemService.updateOrderId(id, orderPojo.getId());
-        }
         return orderPojo;
     }
 
     @Transactional(readOnly = true)
     public List<OrderPojo> getAll() {
+        System.out.println("order service");
         return orderDao.getAll();
     }
 
@@ -47,15 +41,13 @@ public class OrderService {
         return orderDao.getById(orderId);
     }
 
+    public List<OrderPojo> getOrdersBetweenDates(String startDate, String endDate) {
+//        System.out.println("Order Service ");
+        return orderDao.getOrdersBetweenDates(ZonedDateTime.parse(startDate), ZonedDateTime.parse(endDate));
+    }
+
     @Transactional(readOnly = true)
-    public void getOrderInvoice(int orderId) throws ApiException {
-        List<OrderItemData> orderItemDataList = orderItemService.getByOrderId(orderId);
-        ZonedDateTime time = getById(orderId).getZonedDateTime();
-        double total = 0.;
-        for (OrderItemData itemData : orderItemDataList) {
-            total += itemData.getQuantity() * itemData.getSellingPrice();
-        }
-        InvoiceData invoiceData = new InvoiceData(orderItemDataList, time, total, orderId);
+    public void getOrderInvoice(int orderId, InvoiceData invoiceData) throws ApiException {
         String invoice = "main/resources/Invoice/invoice" + orderId + ".pdf";
         String xml = jaxbObjectToXML(invoiceData);
         File xsltFile = new File("src", "main/resources/com/increff/pos/invoice.xml");

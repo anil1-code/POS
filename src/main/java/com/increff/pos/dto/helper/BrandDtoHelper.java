@@ -12,25 +12,29 @@ import java.util.List;
 public class BrandDtoHelper {
 
     private static final int MAX_LENGTH = 50; // While changing this, also change the maxLength attribute of the input field in frontend
+
     public static void normalize(BrandForm brandForm) throws ApiException {
-        StringBuilder errorMsg = new StringBuilder("");
-        if (StringUtil.isEmpty(brandForm.getBrandName())) {
-            errorMsg.append("Brand cannot be empty. ");
+        if(brandForm == null) {
+            throw new ApiException("Null form\n");
         }
-        if(StringUtil.isEmpty(brandForm.getCategoryName())) {
-            errorMsg.append("Category cannot be empty. ");
-        }
-        if(brandForm.getBrandName().length() > MAX_LENGTH) {
-            errorMsg.append("Brand should not exceed the maximum length(" + MAX_LENGTH+ "). ");
-        }
-        if(brandForm.getCategoryName().length() > MAX_LENGTH) {
-            errorMsg.append("Category should not exceed the maximum length(" + MAX_LENGTH+ "). ");
-        }
-        if(errorMsg.length() != 0) {
-            throw new ApiException(errorMsg + "\n");
-        }
+        StringBuilder errorMsg = new StringBuilder();
         brandForm.setBrandName(StringUtil.trimAndLowerCase(brandForm.getBrandName()));
         brandForm.setCategoryName(StringUtil.trimAndLowerCase(brandForm.getCategoryName()));
+        if (StringUtil.isEmpty(brandForm.getBrandName())) {
+            errorMsg.append("Empty brand. ");
+        }
+        if (StringUtil.isEmpty(brandForm.getCategoryName())) {
+            errorMsg.append("Empty Category. ");
+        }
+        if (brandForm.getBrandName().length() > MAX_LENGTH) {
+            errorMsg.append("Brand exceeds maximum length(" + MAX_LENGTH + "). ");
+        }
+        if (brandForm.getCategoryName().length() > MAX_LENGTH) {
+            errorMsg.append("Category exceeds maximum length(" + MAX_LENGTH + "). ");
+        }
+        if (errorMsg.length() != 0) {
+            throw new ApiException(errorMsg + "\n");
+        }
     }
 
     public static BrandPojo convertToPojo(BrandForm brandForm) {

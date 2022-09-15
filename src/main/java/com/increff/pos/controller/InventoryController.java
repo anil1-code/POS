@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @Api
 @RestController
 @RequestMapping(value = "/api/inventory")
@@ -33,6 +34,7 @@ public class InventoryController {
     @ApiOperation(value = "add a list of inventory to the database")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public List<InventoryPojo> add(@RequestBody List<InventoryForm> inventoryFormList) throws ApiException {
+        System.out.println(inventoryFormList.get(0).getQuantity());
         return inventoryDto.add(inventoryFormList);
     }
 

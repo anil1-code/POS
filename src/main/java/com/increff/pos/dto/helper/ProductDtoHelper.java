@@ -23,6 +23,8 @@ public class ProductDtoHelper {
     }
 
     public static void normalize(ProductForm productForm) throws ApiException {
+        productForm.setName(StringUtil.trimAndLowerCase(productForm.getName()));
+        productForm.setBarcode(StringUtil.trimAndLowerCase(productForm.getBarcode()));
         StringBuilder errorMsg = new StringBuilder("");
         if (StringUtil.isEmpty(productForm.getName())) {
             errorMsg.append("Product name cannot be empty. ");
@@ -42,8 +44,6 @@ public class ProductDtoHelper {
         if (errorMsg.length() != 0) {
             throw new ApiException(errorMsg + "\n");
         }
-        productForm.setName(StringUtil.trimAndLowerCase(productForm.getName()));
-        productForm.setBarcode(StringUtil.trimAndLowerCase(productForm.getBarcode()));
     }
 
     public static ProductData convertToData(ProductPojo productPojo) {
