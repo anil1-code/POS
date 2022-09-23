@@ -35,7 +35,7 @@ public class ControllerConfig implements WebMvcConfigurer {
         return new Docket(DocumentationType.SWAGGER_2)//
                 .useDefaultResponseMessages(false)//
                 .select().apis(RequestHandlerSelectors.basePackage(PACKAGE_CONTROLLER))//
-                .paths(PathSelectors.regex("/.*"))//
+                .paths(PathSelectors.regex("/api/.*"))//
                 .build();
     }
 

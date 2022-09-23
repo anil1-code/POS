@@ -26,7 +26,7 @@ public class BrandController {
     }
 
     @ApiOperation(value = "add a list of brand category pairs")
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public List<BrandPojo> add(@RequestBody List<BrandForm> brandFormList) throws ApiException {
         return brandDto.add(brandFormList);
     }

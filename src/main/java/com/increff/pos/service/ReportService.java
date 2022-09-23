@@ -8,6 +8,7 @@ import com.increff.pos.model.data.SalesReportSingleRowData;
 import com.increff.pos.pojo.BrandPojo;
 import com.increff.pos.pojo.InventoryPojo;
 import com.increff.pos.pojo.OrderItemPojo;
+import com.increff.pos.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class ReportService {
                 singleRowData.setQuantity(singleRowData.getQuantity() + orderItemPojoList.get(i).getQuantity());
                 singleRowData.setRevenue(singleRowData.getRevenue() + orderItemPojoList.get(i).getQuantity() * orderItemPojoList.get(i).getSellingPrice());
             }
+            singleRowData.setRevenue(StringUtil.truncateDouble(singleRowData.getRevenue()));
         }
         SalesReportData salesReportData = new SalesReportData();
         salesReportData.setSalesReportSingleRowDataList(new ArrayList<>(hashMap.values()));

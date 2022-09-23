@@ -25,8 +25,8 @@ public class OrderItemController {
         return orderItemDto.getAll();
     }
 
-    @ApiOperation(value = "add an order item to the database")
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ApiOperation(value = "add an order item")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public OrderItemPojo add(@RequestBody OrderItemForm orderItemForm) throws ApiException {
         return orderItemDto.add(orderItemForm);
     }
@@ -40,11 +40,18 @@ public class OrderItemController {
     @ApiOperation(value = "delete an order item by its id")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable int id) {
-        orderItemDto.delete(id);
+        System.out.println(id);orderItemDto.delete(id);
+    }
+
+
+    @ApiOperation(value = "delete a brand category pair by id")
+    @RequestMapping(value = "/delete/order/{orderId}", method = RequestMethod.DELETE)
+    public void deleteByOrderId(@PathVariable int orderId) {
+        orderItemDto.delete(orderId);
     }
 
     @ApiOperation(value = "get a list of order items corresponding to the order id")
-    @RequestMapping(value = "/{orderId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/order/{orderId}", method = RequestMethod.GET)
     public List<OrderItemData> getByOrderId(@PathVariable int orderId) {
         return orderItemDto.getByOrderId(orderId);
     }
@@ -54,5 +61,4 @@ public class OrderItemController {
     public OrderItemData getByOrderItemId(@PathVariable int orderItemId) {
         return orderItemDto.getByOrderItemId(orderItemId);
     }
-
 }

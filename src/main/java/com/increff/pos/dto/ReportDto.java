@@ -1,7 +1,6 @@
 package com.increff.pos.dto;
 
 import com.increff.pos.model.data.InventoryReportData;
-import com.increff.pos.model.data.InventoryReportSingleRowData;
 import com.increff.pos.model.data.SalesReportData;
 import com.increff.pos.pojo.BrandPojo;
 import com.increff.pos.pojo.InventoryPojo;
@@ -51,9 +50,8 @@ public class ReportDto {
 
     public InventoryReportData inventoryReport() {
         List<InventoryPojo> inventoryPojoList = inventoryService.getAll();
-        List<InventoryReportSingleRowData> inventoryReportSingleRowDataList = new ArrayList<>();
         List<BrandPojo> brandPojoList = new ArrayList<>();
-        for(InventoryPojo inventoryPojo : inventoryPojoList) {
+        for (InventoryPojo inventoryPojo : inventoryPojoList) {
             BrandPojo brandPojo = brandService.getById(productService.getById(inventoryPojo.getProductId()).getBrandCategory());
             brandPojoList.add(brandPojo);
         }

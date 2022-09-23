@@ -2,7 +2,7 @@ const head_name = "Products";
 
 highlightItem(head_name);
 
-fetchAndDisplayProducts();
+fetchAndDisplayProductsAndBrands();
 
 function showProductModal(id) {
     $('#edit-product-modal').modal('show');
@@ -63,7 +63,7 @@ function updateProduct() {
         },
         success: function (response) {
             console.log("Employee updated " + response);
-            fetchAndDisplayProducts();
+            fetchAndDisplayProductsAndBrands();
         },
         error: function (response) {
             var response = JSON.parse(response.responseText);
@@ -90,7 +90,7 @@ function addProduct() {
         + '"}]';
 
     $.ajax({
-        url: 'http://localhost:8000/pos/api/products/',
+        url: 'http://localhost:8000/pos/api/products/add',
         type: 'POST',
         data: json,
         headers: {
@@ -98,7 +98,7 @@ function addProduct() {
         },
         success: function (response) {
             console.log("Employee added " + response);
-            fetchAndDisplayProducts();
+            fetchAndDisplayProductsAndBrands();
             $("#inputName").val('');
             $("#inputBarcode").val('');
             $("#inputId").val('');
@@ -111,28 +111,14 @@ function addProduct() {
     });
 }
 
-var data;
-function get_brand_and_category(id) {
-    var x = "", y = "";
-    for (var i in data) {
-        if (data[i].id == id) {
-            x = data[i].brandName;
-            y = data[i].categoryName;
-            break;
-        }
-    }
-    return [x, y];
-}
-
-function fetchAndDisplayProducts() {
-    // first fetch the brand-categories
+function fetchAndDisplayProductsAndBrands() {
     $.ajax({
         url: 'http://localhost:8000/pos/api/brands',
         type: 'GET',
         data: {},
         dataType: 'json',
         success: function (data) {
-            window.data = data;
+            // refresh the brand category dropdown
             var list = $('#brand_cat_id_dropdown');
             list.children('option:not(:first)').remove();
             for (var i in data) {
@@ -140,45 +126,40 @@ function fetchAndDisplayProducts() {
                     data[i].brandName + ' , ' + data[i].categoryName +
                     '</option>';
                 list.append(item);
-            }
-            // now fetch the data
-            $.ajax({
-                url: 'http://localhost:8000/pos/api/products',
-                type: 'GET',
-                data: {},
-                dataType: 'json',
-                success: function (data) {
-                    // now show the data
-                    var $tbody = $('#product-table').find('tbody');
-                    $tbody.children('tr:not(:first)').remove();
-                    for (var i in data) {
-                        var e = data[i];
-                        var buttonHtml = '<button class="btn btn-danger" onclick="deleteBrand(' + e.id + ')">delete</button>'
-                        buttonHtml += ' <button class="btn btn-warning" onclick="showProductModal(' + e.id + ')">edit</button>';
-                        let bc = get_brand_and_category(e.brandCategory);
-                        console.log(bc);
-                        var row = '<tr>'
-                            + '<td>' + e.name + '</td>'
-                            + '<td>' + e.barcode + '</td>'
-                            + '<td>' + bc[0] + '</td>'
-                            + '<td>' + bc[1] + '</td>'
-                            + '<td>' + e.mrp + '</td>'
-                            + '<td>' + buttonHtml + '</td>'
-                            + '</tr>';
-                        $tbody.append(row);
-                    }
-                },
-                error: function (response) {
-                    var response = JSON.parse(response.responseText);
-                    alert(response.message);
-                }
-            });
+            }     
         },
         error: function (response) {
             var response = JSON.parse(response.responseText);
             alert(response.message);
         }
     });
-
-
+    $.ajax({
+        url: 'http://localhost:8000/pos/api/products',
+        type: 'GET',
+        data: {},
+        dataType: 'json',
+        success: function (data) {
+            // now show the data
+            var $tbody = $('#product-table').find('tbody');
+            $tbody.children('tr:not(:first)').remove();
+            for (var i in data) {
+                var e = data[i];
+                var buttonHtml = '<button class="btn btn-danger" onclick="deleteBrand(' + e.id + ')">delete</button>'
+                buttonHtml += ' <button class="btn btn-warning" onclick="showProductModal(' + e.id + ')">edit</button>';
+                var row = '<tr>'
+                    + '<td>' + e.name + '</td>'
+                    + '<td>' + e.barcode + '</td>'
+                    + '<td>' + e.brandName + '</td>'
+                    + '<td>' + e.categoryName + '</td>'
+                    + '<td>' + e.mrp + '</td>'
+                    + '<td>' + buttonHtml + '</td>'
+                    + '</tr>';
+                $tbody.append(row);
+            }
+        },
+        error: function (response) {
+            var response = JSON.parse(response.responseText);
+            alert(response.message);
+        }
+    });
 }

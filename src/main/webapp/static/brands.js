@@ -42,7 +42,7 @@ function uploadRows(fileData) {
     json += "]";
     // Make ajax call
     $.ajax({
-        url: 'http://localhost:8000/pos/api/brands/',
+        url: 'http://localhost:8000/pos/api/brands/add',
         type: 'POST',
         data: json,
         headers: {
@@ -130,7 +130,7 @@ function addBrand() {
         + '", "categoryName": "' + category
         + '"}]';
     $.ajax({
-        url: 'http://localhost:8000/pos/api/brands/',
+        url: 'http://localhost:8000/pos/api/brands/add',
         type: 'POST',
         data: json,
         headers: {

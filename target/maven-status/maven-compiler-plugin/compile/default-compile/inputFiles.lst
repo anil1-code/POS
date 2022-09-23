@@ -24,6 +24,7 @@
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/dao/AbstractDao.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/controller/ReportController.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/spring/WebInitializer.java
+/home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/constants/consts.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/dto/ProductDto.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/spring/DbConfig.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/dao/InventoryDao.java
@@ -55,7 +56,6 @@
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/service/OrderService.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/util/StringUtil.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/exception/ApiException.java
-/home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/fortodo.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/model/forms/OrderItemForm.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/model/data/InvoiceData.java
 /home/anil/IdeaProjects/POS/src/main/java/com/increff/pos/spring/ControllerConfig.java

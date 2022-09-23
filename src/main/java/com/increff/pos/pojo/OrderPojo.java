@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.ZonedDateTime;
 
@@ -16,6 +18,7 @@ public class OrderPojo {
     * this represents a single order(may contain multiple OrderItems) placed by a user at the given point of time
     * */
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private ZonedDateTime zonedDateTime;
 }

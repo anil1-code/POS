@@ -42,7 +42,7 @@
                                         padding-left: 12px;
                                         margin-top: -34px;
                                         font-size: 14px;
-                                        width: fit-content;" id="brand_cat_id_dropdown">
+                                        width: 230px;" id="brand_cat_id_dropdown">
                                         <option selected>Select Brand Category</option>
                                         <option value="1">One</option>
                                         <option value="2">Two</option>
@@ -69,8 +69,11 @@
                                     <button type="button" class="btn btn-primary" id="add-product"
                                         onclick="addProduct()">Add</button>
                                     &nbsp;
-                                    <button type="button" class="btn btn-primary" id="refresh-data"
-                                        onclick="fetchAndDisplayProducts()">Refresh</button>
+                                    <button type="button" class="btn btn-primary" id="add-brand"
+                                        onclick="showBulkUploadDialog()">Bulk Add</button>
+                                    &nbsp;
+                                    <button type="button" class="btn btn-circle btn-sm glyphicon glyphicon-refresh"
+                                        id="refresh-data" onclick="fetchAndDisplayProducts()"></button>
                                 </div>
                             </th>
                         </tr>

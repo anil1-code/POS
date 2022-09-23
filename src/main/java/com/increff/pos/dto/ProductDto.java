@@ -1,9 +1,11 @@
 package com.increff.pos.dto;
 
+import com.increff.pos.constants.consts;
 import com.increff.pos.dto.helper.ProductDtoHelper;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.ProductData;
 import com.increff.pos.model.forms.ProductForm;
+import com.increff.pos.pojo.BrandPojo;
 import com.increff.pos.pojo.ProductPojo;
 import com.increff.pos.service.BrandService;
 import com.increff.pos.service.ProductService;
@@ -21,16 +23,20 @@ public class ProductDto {
     private ProductService productService;
     @Autowired
     private BrandService brandService;
-    private final static int MAX_ROWS = 5000;
 
     public List<ProductData> getAll() {
         List<ProductPojo> productPojoList = productService.getAll();
-        return ProductDtoHelper.convertToProductDataList(productPojoList);
+        List<BrandPojo> brandPojoList = new ArrayList<>();
+        for(ProductPojo productPojo : productPojoList) {
+            BrandPojo brandPojo = brandService.getById(productPojo.getBrandCategory());
+            brandPojoList.add(brandPojo);
+        }
+        return ProductDtoHelper.convertToProductDataList(productPojoList, brandPojoList);
     }
 
     @Transactional(rollbackFor = ApiException.class)
     public List<ProductPojo> add(List<ProductForm> productFormList) throws ApiException {
-        if (productFormList.size() > MAX_ROWS) {
+        if (productFormList.size() > consts.MAX_ROWS) {
             throw new ApiException("number of rows exceeds the limit");
         }
         List<ProductPojo> addedPojoList = new ArrayList<>();
@@ -56,7 +62,7 @@ public class ProductDto {
     }
 
     public void delete(int id) {
-        productService.delete(id);
+        // productService.delete(id);
     }
 
     public ProductPojo update(int id, ProductForm productForm) throws ApiException {
@@ -74,6 +80,6 @@ public class ProductDto {
         if(productPojo == null) {
             throw new ApiException("Does not exist");
         }
-        return ProductDtoHelper.convertToData(productPojo);
+        return ProductDtoHelper.convertToData(productPojo, brandService.getById(productPojo.getBrandCategory()));
     }
 }

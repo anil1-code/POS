@@ -3,25 +3,31 @@ package com.increff.pos.dto.helper;
 import com.increff.pos.model.data.OrderItemData;
 import com.increff.pos.model.forms.OrderItemForm;
 import com.increff.pos.pojo.OrderItemPojo;
+import com.increff.pos.pojo.ProductPojo;
+import com.increff.pos.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderItemDtoHelper {
-    public static List<OrderItemData> convertPojoListToDataList(List<OrderItemPojo> orderItemPojoList) {
+    public static List<OrderItemData> convertPojoListToDataList(List<OrderItemPojo> orderItemPojoList, List<ProductPojo> productPojoList) {
         List<OrderItemData> orderItemDataList = new ArrayList<>();
+        int i = 0;
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            orderItemDataList.add(convertPojoToData(orderItemPojo));
+            orderItemDataList.add(convertPojoToData(orderItemPojo, productPojoList.get(i++)));
         }
         return orderItemDataList;
     }
 
-    public static OrderItemData convertPojoToData(OrderItemPojo orderItemPojo) {
+    public static OrderItemData convertPojoToData(OrderItemPojo orderItemPojo, ProductPojo productPojo) {
         OrderItemData orderItemData = new OrderItemData();
+        orderItemData.setOrderItemId(orderItemPojo.getId());
         orderItemData.setSellingPrice(orderItemPojo.getSellingPrice());
         orderItemData.setOrderId(orderItemPojo.getOrderId());
         orderItemData.setQuantity(orderItemPojo.getQuantity());
         orderItemData.setProductId(orderItemPojo.getProductId());
+        orderItemData.setProductName(productPojo.getName());
+        orderItemData.setBarcode(productPojo.getBarcode());
         return orderItemData;
     }
 
@@ -49,8 +55,11 @@ public class OrderItemDtoHelper {
         }
         if (orderItemForm.getSellingPrice() == null) {
             errorMessageData.append("Missing Selling Price. ");
-        } else if (orderItemForm.getSellingPrice() == 0) {
-            errorMessageData.append("Price cannot be zero. ");
+        } else {
+            orderItemForm.setSellingPrice(StringUtil.truncateDouble(orderItemForm.getSellingPrice()));
+            if (orderItemForm.getSellingPrice() == 0) {
+                errorMessageData.append("Price cannot be zero. ");
+            }
         }
         return errorMessageData;
     }

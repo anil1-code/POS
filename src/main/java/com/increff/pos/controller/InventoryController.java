@@ -32,7 +32,7 @@ public class InventoryController {
     }
 
     @ApiOperation(value = "add a list of inventory to the database")
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public List<InventoryPojo> add(@RequestBody List<InventoryForm> inventoryFormList) throws ApiException {
         System.out.println(inventoryFormList.get(0).getQuantity());
         return inventoryDto.add(inventoryFormList);

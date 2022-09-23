@@ -1,10 +1,12 @@
 package com.increff.pos.dto;
 
+import com.increff.pos.constants.consts;
 import com.increff.pos.dto.helper.InventoryDtoHelper;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.InventoryData;
 import com.increff.pos.model.forms.InventoryForm;
 import com.increff.pos.pojo.InventoryPojo;
+import com.increff.pos.pojo.ProductPojo;
 import com.increff.pos.service.InventoryService;
 import com.increff.pos.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +23,28 @@ public class InventoryDto {
     private InventoryService inventoryService;
     @Autowired
     private ProductService productService;
-    private final static int MAX_ROWS = 5000;
-
     public List<InventoryData> getAll() {
         List<InventoryPojo> inventoryPojoList = inventoryService.getAll();
-        return InventoryDtoHelper.convertToInventoryDataList(inventoryPojoList);
+        List<ProductPojo> productPojoList = new ArrayList<>();
+        for(InventoryPojo inventoryPojo : inventoryPojoList) {
+            ProductPojo productPojo = productService.getById(inventoryPojo.getProductId());
+            productPojoList.add(productPojo);
+        }
+        return InventoryDtoHelper.convertToInventoryDataList(inventoryPojoList, productPojoList);
     }
 
     @Transactional(rollbackFor = ApiException.class)
     public InventoryData getById(int id) {
-        return InventoryDtoHelper.convertToInventoryData(inventoryService.getByProductId(id));
+        return InventoryDtoHelper.convertToInventoryData(inventoryService.getByProductId(id), productService.getById(id));
     }
 
+    /*
+    * this method converts form to InventoryPojo and add them one by one
+    * in case of error it continues and eventually throws the well formatted full error string
+    */
     @Transactional(rollbackFor = ApiException.class)
     public List<InventoryPojo> add(List<InventoryForm> inventoryFormList) throws ApiException {
-        if (inventoryFormList.size() > MAX_ROWS) {
+        if (inventoryFormList.size() > consts.MAX_ROWS) {
             throw new ApiException("number of rows exceeds the limit");
         }
         List<InventoryPojo> addedPojoList = new ArrayList<>();

@@ -27,7 +27,7 @@ public class ProductController {
     }
 
     @ApiOperation(value = "add a list of products")
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public List<ProductPojo> add(@RequestBody List<ProductForm> productFormList) throws ApiException {
         return productDto.add(productFormList);
     }

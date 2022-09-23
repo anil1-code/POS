@@ -1,5 +1,6 @@
 package com.increff.pos.dto;
 
+import com.increff.pos.constants.consts;
 import com.increff.pos.dto.helper.BrandDtoHelper;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.BrandData;
@@ -19,12 +20,16 @@ public class BrandDto {
     @Autowired
     public BrandService brandService;
 
-    private final static int MAX_ROWS = 5000;
 
+
+    /*
+    * this method converts form to BrandPojo and add them one by one
+    * in case of error it continues and eventually throws the well formatted full error string
+    */
     @Transactional(rollbackFor = ApiException.class)
     public List<BrandPojo> add(List<BrandForm> brandFormList) throws ApiException {
-        if(brandFormList.size() > MAX_ROWS) {
-            throw new ApiException("number of rows exceeds the limit");
+        if(brandFormList.size() > consts.MAX_ROWS) {
+            throw new ApiException("number of brand category combinations exceeds the max limit");
         }
         List<BrandPojo> addedPojoList = new ArrayList<>();
         StringBuilder errorMessageData = new StringBuilder();
@@ -51,11 +56,14 @@ public class BrandDto {
         return BrandDtoHelper.convertToDataList(brandPojoList);
     }
 
+    /*
+    * gets the BrandData corresponding to the id given, throws error if does not exist
+    */
     @Transactional(readOnly = true)
     public BrandData get(int id) throws ApiException {
         BrandPojo brandPojo = brandService.getById(id);
         if(brandPojo == null) {
-            throw new ApiException("Does not exist");
+            throw new ApiException("Brand category combination does not exist");
         }
         return BrandDtoHelper.convertToData(brandPojo);
     }
@@ -64,6 +72,9 @@ public class BrandDto {
         brandService.delete(id);
     }
 
+    /*
+    * updates the BrandPojo with id given
+    */
     public BrandPojo update(int id, BrandForm brandForm) throws ApiException {
         BrandDtoHelper.normalize(brandForm);
         BrandPojo brandPojo = BrandDtoHelper.convertToPojo(brandForm);

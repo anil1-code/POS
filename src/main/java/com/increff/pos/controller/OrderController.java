@@ -20,7 +20,7 @@ public class OrderController {
     private OrderDto orderDto;
 
     @ApiOperation(value = "add/place the order")
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public OrderPojo add(@RequestBody OrderForm orderForm) throws ApiException {
         return orderDto.add(orderForm);
     }
