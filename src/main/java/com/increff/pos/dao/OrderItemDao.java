@@ -12,8 +12,10 @@ import java.util.List;
 @Repository
 public class OrderItemDao extends AbstractDao {
     private static final String deleteById = "delete from OrderItemPojo p where id=:id";
+    private static final String deleteByOrderId = "delete from OrderItemPojo p where orderId=:orderId";
     private static final String selectById = "select p from OrderItemPojo p where id=:id";
     private static final String selectByOrderId = "select p from OrderItemPojo p where orderId=:orderId";
+    private static final String selectByOrderIdAndProductId = "select p from OrderItemPojo p where orderId=:orderId and productId=:productId";
     private static final String selectAll = "select p from OrderItemPojo p";
 
     @Transactional(rollbackFor = ApiException.class)
@@ -39,6 +41,13 @@ public class OrderItemDao extends AbstractDao {
         return typedQuery.getResultList();
     }
 
+    public OrderItemPojo getByOrderIdAndProductId(int orderId, int productId) {
+        TypedQuery<OrderItemPojo> typedQuery = getQuery(selectByOrderIdAndProductId, OrderItemPojo.class);
+        typedQuery.setParameter("orderId", orderId);
+        typedQuery.setParameter("productId", productId);
+        return getSingle(typedQuery);
+    }
+
     public OrderItemPojo update(OrderItemPojo orderItemPojo) {
         em().merge(orderItemPojo);
         return orderItemPojo;
@@ -47,6 +56,12 @@ public class OrderItemDao extends AbstractDao {
     public void delete(int id) {
         Query query = em().createQuery(deleteById);
         query.setParameter("id", id);
+        query.executeUpdate();
+    }
+
+    public void deleteByOrderId(int orderId) {
+        Query query = em().createQuery(deleteByOrderId);
+        query.setParameter("orderId", orderId);
         query.executeUpdate();
     }
 }

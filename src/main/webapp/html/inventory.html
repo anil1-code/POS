@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+
+<head th:replace="templates.html :: common_head"></head>
+
+<body>
+
+    <nav th:replace="templates.html :: common_navbar"></nav>
+    <div th:replace="templates.html :: general_toast"></div>
+
+    <table class="table table-striped" id="inventory-table" style="width: 80vw; margin-left: 10vw;">
+        <thead>
+            <tr>
+                <th scope="col" colspan="3">
+                    <div style="margin-bottom: 15px;" class="form-group">
+                        <select class="form-select" aria-label="Default select example" style="padding-top: 6px;
+                                        padding-right: 12px;
+                                        padding-bottom: 6px;
+                                        padding-left: 12px;
+                                        margin-top: -34px;
+                                        font-size: 14px;
+                                        width: 350px;" id="product_id_dropdown">
+                            <option selected>Select Product</option>
+                            <option value="1">One</option>
+                        </select>
+                    </div>
+                </th>
+                <th scope="col" style="min-width: 165px; max-width: 165px;">
+                    <div class="form-group" id="add-quantity">
+                        <label for="inputQuantity" class="col-form-label">Quantity</label>
+                        <div class="input-text">
+                            <input type="number" class="form-control" name="quantity" id="inputQuantity"
+                                placeholder="Enter Quantity">
+                        </div>
+                    </div>
+                </th>
+                <th scope="col">
+                    <div class="form-group" style="min-width: 225px; max-width: 225px;">
+                        <button type="button" class="btn btn-primary" id="add-inventory"
+                            onclick="addInventory()">Add</button>
+                        &nbsp;
+                        <button type="button" class="btn btn-primary" id="add-inventory"
+                            onclick="showBulkUploadDialog()">Bulk Add</button>
+                        &nbsp;
+                        <button type="button" class="btn btn-default btn-circle btn-sm" id="refresh-data"
+                            onclick="fetchAndDisplayInventoryAndProducts()" style="font-size: 20px;">&#x27F3;</button>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="col">S.no</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Barcode</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <!-- Inventory Bulk Upload Modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="inventory-bulk-upload-modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" style="font-size: large;">Upload Inventory via file</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="inventory-file">
+                        <input type="file" class="custom-file-input" id="inventoryFile">
+                        <label class="custom-file-label" for="inventoryFile" id="inventoryFileName">Choose
+                            file</label>
+                    </div>
+                    <a href="static/inventory.tsv" target="_blank">Download Sample</a>
+                    <br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="process-inventory-data" data-id=""
+                        onclick="processData()">Upload</button>
+                    <button type="button" class="btn btn-warning" id="download-errors" data-error =""
+                        onclick="downloadErrors(this)">Download Errors</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Edit Modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="edit-inventory-modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" style="font-size: large;">Edit Inventory</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline" id="inventory-edit-form">
+                        <div class="form-group">
+                            <label for="inputEditProduct" class="col-form-label">Product Name:</label>
+                            <div class="input-text">
+                                <input class="form-control" name="productName" id="inputEditProduct"  style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="form-group" id="add-edit-quantity" style="margin-top: 10px;">
+                            <label for="inputEditQuantity" class="col-form-label">Quantity:</label>
+                            <div class="input-text">
+                                <input type="number" class="form-control" name="quantity" id="inputEditQuantity"
+                                    placeholder="Enter Quantity">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateInventory(this)" id="update-inventory" data-id="">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer th:replace="templates.html :: common_footer"></footer>
+
+</body>
+
+<script th:src="@{/static/inventory.js}"></script>
+
+</html>

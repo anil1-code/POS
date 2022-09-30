@@ -3,6 +3,7 @@ package com.increff.pos.dao;
 import com.increff.pos.pojo.OrderPojo;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -13,6 +14,8 @@ public class OrderDao extends AbstractDao {
     private static final String selectById = "select p from OrderPojo p where id=:id";
     private static final String selectBetweenDates = "select p from OrderPojo p where zonedDateTime BETWEEN :startDate AND :endDate";
 
+    private static final String deleteById = "delete from OrderPojo p where id=:id";
+
 
     public OrderPojo add(OrderPojo orderPojo) {
         em().persist(orderPojo);
@@ -20,9 +23,14 @@ public class OrderDao extends AbstractDao {
     }
 
     public List<OrderPojo> getAll() {
-        System.out.println("order dao");
         TypedQuery<OrderPojo> typedQuery = getQuery(selectAll, OrderPojo.class);
         return typedQuery.getResultList();
+    }
+
+    public void delete(int id) {
+        Query query = em().createQuery(deleteById);
+        query.setParameter("id", id);
+        query.executeUpdate();
     }
 
     public OrderPojo getById(int orderId) {
@@ -35,9 +43,8 @@ public class OrderDao extends AbstractDao {
         TypedQuery<OrderPojo> typedQuery = getQuery(selectBetweenDates, OrderPojo.class);
         typedQuery.setParameter("startDate", startDate);
         typedQuery.setParameter("endDate", endDate);
-//        System.out.println("Here ");
-//        System.out.println(selectBetweenDates);
-//        System.out.println(typedQuery);
+
         return typedQuery.getResultList();
     }
+
 }

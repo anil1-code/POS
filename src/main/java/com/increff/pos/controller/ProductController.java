@@ -32,12 +32,6 @@ public class ProductController {
         return productDto.add(productFormList);
     }
 
-    @ApiOperation(value = "get a product by its id")
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ProductData getById(@PathVariable int id) throws ApiException {
-        return productDto.get(id);
-    }
-
     @ApiOperation(value = "delete a product by its id")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable int id) {
@@ -47,7 +41,6 @@ public class ProductController {
     @ApiOperation(value = "update a product by its id")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
     public ProductPojo update(@PathVariable int id, @RequestBody ProductForm productForm) throws ApiException {
-        System.out.println("update started");
         return productDto.update(id, productForm);
     }
 }

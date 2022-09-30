@@ -40,19 +40,18 @@ public class OrderItemController {
     @ApiOperation(value = "delete an order item by its id")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable int id) {
-        System.out.println(id);orderItemDto.delete(id);
+        orderItemDto.delete(id);
     }
 
-
-    @ApiOperation(value = "delete a brand category pair by id")
+    @ApiOperation(value = "delete all order items inside this unplaced order")
     @RequestMapping(value = "/delete/order/{orderId}", method = RequestMethod.DELETE)
-    public void deleteByOrderId(@PathVariable int orderId) {
-        orderItemDto.delete(orderId);
+    public void deleteByOrderId(@PathVariable int orderId) throws ApiException {
+        orderItemDto.deleteByOrderId(orderId);
     }
 
     @ApiOperation(value = "get a list of order items corresponding to the order id")
     @RequestMapping(value = "/order/{orderId}", method = RequestMethod.GET)
-    public List<OrderItemData> getByOrderId(@PathVariable int orderId) {
+    public List<OrderItemData> getByOrderId(@PathVariable int orderId) throws ApiException {
         return orderItemDto.getByOrderId(orderId);
     }
 

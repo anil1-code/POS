@@ -1,5 +1,6 @@
 package com.increff.pos.pojo;
 
+import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,10 +16,11 @@ import java.time.ZonedDateTime;
 @Entity
 public class OrderPojo {
     /*
-    * this represents a single order(may contain multiple OrderItems) placed by a user at the given point of time
-    * */
+     * this represents a single order(may contain multiple OrderItems) placed by a user at the given point of time
+     * */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private ZonedDateTime zonedDateTime;
+    @Nullable
+    private ZonedDateTime zonedDateTime; // this will store the date of placement of this order, if the order is unplaced this will be null
 }

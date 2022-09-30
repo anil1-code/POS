@@ -1,5 +1,6 @@
 package com.increff.pos.pojo;
 
+import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,5 +13,6 @@ import javax.persistence.Id;
 public class InventoryPojo {
     @Id
     private Integer productId;
+    @NotNull
     private Integer quantity;
 }

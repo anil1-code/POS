@@ -1,39 +1,40 @@
 package com.increff.pos.dto.helper;
 
+import com.increff.pos.constants.Const;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.BrandData;
 import com.increff.pos.model.forms.BrandForm;
 import com.increff.pos.pojo.BrandPojo;
-import com.increff.pos.util.StringUtil;
+import com.increff.pos.util.BasicDataUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BrandDtoHelper {
-
-    private static final int MAX_LENGTH = 50; // While changing this, also change the maxLength attribute of the input field in frontend
-
-    public static void normalize(BrandForm brandForm) throws ApiException {
-        if(brandForm == null) {
-            throw new ApiException("Input form should not be null\n");
+    public static void validateAndNormalize(BrandForm brandForm) throws ApiException {
+        if (brandForm == null) {
+            throw new ApiException("Input form should not be null.\n");
         }
         StringBuilder errorMsg = new StringBuilder();
-        brandForm.setBrandName(StringUtil.trimAndLowerCase(brandForm.getBrandName()));
-        brandForm.setCategoryName(StringUtil.trimAndLowerCase(brandForm.getCategoryName()));
-        if (StringUtil.isEmpty(brandForm.getBrandName())) {
-            errorMsg.append("Brand name should not be empty. ");
+        if (BasicDataUtil.isEmpty(brandForm.getBrandName())) {
+            errorMsg.append("Brand name should not be empty, ");
         }
-        if (StringUtil.isEmpty(brandForm.getCategoryName())) {
-            errorMsg.append("Category name should not be empty. ");
+        if (BasicDataUtil.isEmpty(brandForm.getCategoryName())) {
+            errorMsg.append("Category name should not be empty, ");
         }
-        if (brandForm.getBrandName().length() > MAX_LENGTH) {
-            errorMsg.append("Brand name should not exceed maximum length(" + MAX_LENGTH + "). ");
+        brandForm.setBrandName(BasicDataUtil.trimAndLowerCase(brandForm.getBrandName()));
+        brandForm.setCategoryName(BasicDataUtil.trimAndLowerCase(brandForm.getCategoryName()));
+        if (brandForm.getBrandName().length() > Const.MAX_LENGTH) {
+            errorMsg.append("Brand name should not exceed maximum length(" + Const.MAX_LENGTH + "), ");
         }
-        if (brandForm.getCategoryName().length() > MAX_LENGTH) {
-            errorMsg.append("Category name should not exceed maximum length(" + MAX_LENGTH + "). ");
+        if (brandForm.getCategoryName().length() > Const.MAX_LENGTH) {
+            errorMsg.append("Category name should not exceed maximum length(" + Const.MAX_LENGTH + "), ");
         }
         if (errorMsg.length() != 0) {
-            throw new ApiException(errorMsg + "\n");
+            errorMsg.deleteCharAt(errorMsg.length() - 1);
+            errorMsg.deleteCharAt(errorMsg.length() - 1);
+            errorMsg.append(".\n");
+            throw new ApiException(errorMsg.toString());
         }
     }
 
@@ -59,5 +60,13 @@ public class BrandDtoHelper {
             brandDataList.add(brandData);
         }
         return brandDataList;
+    }
+
+    public static List<BrandPojo> convertToPojoList(List<BrandForm> brandFormList) {
+        List<BrandPojo> brandPojoList = new ArrayList<>();
+        for (BrandForm brandForm : brandFormList) {
+            brandPojoList.add(convertToPojo(brandForm));
+        }
+        return brandPojoList;
     }
 }

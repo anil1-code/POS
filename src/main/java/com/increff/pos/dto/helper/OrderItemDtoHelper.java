@@ -4,7 +4,7 @@ import com.increff.pos.model.data.OrderItemData;
 import com.increff.pos.model.forms.OrderItemForm;
 import com.increff.pos.pojo.OrderItemPojo;
 import com.increff.pos.pojo.ProductPojo;
-import com.increff.pos.util.StringUtil;
+import com.increff.pos.util.BasicDataUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,27 +40,32 @@ public class OrderItemDtoHelper {
         return orderItemPojo;
     }
 
-    public static StringBuilder orderItemChecker(OrderItemForm orderItemForm) {
-        StringBuilder errorMessageData = new StringBuilder();
+    public static String validate(OrderItemForm orderItemForm) {
+        StringBuilder errorMsg = new StringBuilder();
         if (orderItemForm.getOrderId() == null) {
-            errorMessageData.append("Missing OrderID. ");
+            errorMsg.append("Missing OrderID, ");
         }
         if (orderItemForm.getProductId() == null) {
-            errorMessageData.append("Missing ProductID. ");
+            errorMsg.append("Missing ProductID, ");
         }
         if (orderItemForm.getQuantity() == null) {
-            errorMessageData.append("Missing Quantity. ");
+            errorMsg.append("Missing Quantity, ");
         } else if (orderItemForm.getQuantity() == 0) {
-            errorMessageData.append("Quantity cannot be zero. ");
+            errorMsg.append("Quantity should not be zero, ");
         }
         if (orderItemForm.getSellingPrice() == null) {
-            errorMessageData.append("Missing Selling Price. ");
+            errorMsg.append("Missing Selling Price, ");
         } else {
-            orderItemForm.setSellingPrice(StringUtil.truncateDouble(orderItemForm.getSellingPrice()));
+            orderItemForm.setSellingPrice(BasicDataUtil.roundOffDouble(orderItemForm.getSellingPrice()));
             if (orderItemForm.getSellingPrice() == 0) {
-                errorMessageData.append("Price cannot be zero. ");
+                errorMsg.append("Price should not be zero, ");
             }
         }
-        return errorMessageData;
+        if (errorMsg.length() != 0) {
+            errorMsg.deleteCharAt(errorMsg.length() - 1);
+            errorMsg.deleteCharAt(errorMsg.length() - 1);
+            errorMsg.append(".\n");
+        }
+        return errorMsg.toString();
     }
 }

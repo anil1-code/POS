@@ -33,7 +33,7 @@ public class NavController {
         return mav("inventory.html");
     }
 
-    @RequestMapping(value = "/place-order")
+    @RequestMapping(value = "/place-order/{order-id}")
     public ModelAndView placeOrder() {
         return mav("place-order.html");
     }

@@ -1,9 +1,14 @@
 package com.increff.pos.service;
 
 import com.increff.pos.dao.OrderDao;
+import com.increff.pos.dto.helper.OrderItemDtoHelper;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.InvoiceData;
+import com.increff.pos.pojo.InventoryPojo;
+import com.increff.pos.pojo.OrderItemPojo;
 import com.increff.pos.pojo.OrderPojo;
+import com.increff.pos.pojo.ProductPojo;
+import com.increff.pos.util.Pair;
 import org.apache.fop.apps.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,37 +23,106 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class OrderService {
     @Autowired
     private OrderDao orderDao;
+    @Autowired
+    private OrderItemService orderItemService;
+    @Autowired
+    private InventoryService inventoryService;
+    @Autowired
+    private ProductService productService;
     private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
+    @Transactional(rollbackFor = ApiException.class)
     public OrderPojo add(OrderPojo orderPojo) throws ApiException {
         orderDao.add(orderPojo);
         return orderPojo;
     }
 
     @Transactional(readOnly = true)
-    public List<OrderPojo> getAll() {
-        System.out.println("order service");
-        return orderDao.getAll();
+    public Pair<List<OrderPojo>, Pair<List<List<OrderItemPojo>>, List<List<ProductPojo>>>> getAll() {
+        List<OrderPojo> orderPojoList = orderDao.getAll();
+        List<List<OrderItemPojo>> orderItemPojoList = new ArrayList<>();
+        List<List<ProductPojo>> productPojoList = new ArrayList<>();
+        for (OrderPojo orderPojo : orderPojoList) {
+            Pair<List<OrderItemPojo>, List<ProductPojo>> pairedLists = null;
+            try {
+                pairedLists = orderItemService.getByOrderId(orderPojo.getId());
+            } catch (ApiException e) {
+                // can never happen
+            }
+            orderItemPojoList.add(pairedLists.fst);
+            productPojoList.add(pairedLists.snd);
+        }
+        return new Pair<>(orderPojoList, new Pair<>(orderItemPojoList, productPojoList));
     }
 
-    public OrderPojo getById(int orderId) {
-        return orderDao.getById(orderId);
+    @Transactional(rollbackFor = ApiException.class)
+    public void delete(int id) throws ApiException {
+        if (getById(id).getZonedDateTime() == null) {
+            orderItemService.deleteByOrderId(id);
+            orderDao.delete(id);
+        } else {
+            // order already placed not cant be deleted
+            throw new ApiException("Order already placed and can't be deleted.\n");
+        }
     }
 
-    public List<OrderPojo> getOrdersBetweenDates(String startDate, String endDate) {
-//        System.out.println("Order Service ");
-        return orderDao.getOrdersBetweenDates(ZonedDateTime.parse(startDate), ZonedDateTime.parse(endDate));
+    @Transactional(rollbackFor = ApiException.class)
+    public void placeOrder(int id) throws ApiException {
+        OrderPojo existingPojo = getById(id);
+        if (existingPojo == null) {
+            // order doesn't exist
+            throw new ApiException("No order exists for this ID: " + id);
+        }
+        if (existingPojo.getZonedDateTime() != null) {
+            // order already placed
+            throw new ApiException("Order with given ID is already placed");
+        }
+        Pair<List<OrderItemPojo>, List<ProductPojo>> pairedPojoList = orderItemService.getByOrderId(id);
+        if (pairedPojoList.fst.isEmpty()) {
+            // empty order cant be placed
+            throw new ApiException("Empty order can't be placed");
+        }
+        // reduce the inventory
+        int i = 0;
+        StringBuilder errorMsg = new StringBuilder();
+        for (OrderItemPojo orderItemPojo : pairedPojoList.fst) {
+            InventoryPojo inventoryPojo = inventoryService.getByProductId(orderItemPojo.getProductId());
+            if (inventoryPojo == null) {
+                errorMsg.append("Inventory not added for ").append(pairedPojoList.snd.get(i).getName()).append(".\n");
+            } else if (inventoryPojo.getQuantity() < orderItemPojo.getQuantity()) {
+                errorMsg.append("Insufficient Inventory for ").append(pairedPojoList.snd.get(i).getName()).append(".\n");
+            } else {
+                inventoryPojo.setQuantity(inventoryPojo.getQuantity() - orderItemPojo.getQuantity());
+            }
+            i++;
+        }
+        if (errorMsg.length() != 0) {
+            throw new ApiException(errorMsg.toString());
+        }
+        existingPojo.setZonedDateTime(ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     }
 
     @Transactional(readOnly = true)
-    public void getOrderInvoice(int orderId, InvoiceData invoiceData) throws ApiException {
-        String invoice = "main/resources/Invoice/invoice" + orderId + ".pdf";
+    public void getOrderInvoice(int orderId) throws ApiException {
+        ZonedDateTime time = getById(orderId).getZonedDateTime();
+        if (time == null) {
+            throw new ApiException("Order isn't placed yet.\n");
+        }
+        double total = 0;
+        Pair<List<OrderItemPojo>, List<ProductPojo>> pairedPojoList = orderItemService.getByOrderId(orderId);
+        for (OrderItemPojo orderItemPojo : pairedPojoList.fst) {
+            total += orderItemPojo.getQuantity() * orderItemPojo.getSellingPrice();
+        }
+        InvoiceData invoiceData = new InvoiceData(OrderItemDtoHelper.convertPojoListToDataList(pairedPojoList.fst, pairedPojoList.snd), time, total, orderId);
+        String invoice = "main/webapp/Invoice/invoice" + orderId + ".pdf";
         String xml = jaxbObjectToXML(invoiceData);
         File xsltFile = new File("src", "main/resources/com/increff/pos/invoice.xml");
         File pdfFile = new File("src", invoice);
@@ -59,6 +133,7 @@ public class OrderService {
         }
     }
 
+    // HELPER methods, these are supposed to be called from a transactional method
     private static String jaxbObjectToXML(InvoiceData invoiceData) {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(InvoiceData.class);
@@ -86,15 +161,24 @@ public class OrderService {
             Result res = new SAXResult(fop.getDefaultHandler());
             transformer.transform(src, res);
         } catch (FOPException e) {
-            System.out.println("FOP Exception");
+
             throw new ApiException(e.getMessage());
-        } catch (TransformerException e) {
-            System.out.println("Transformer Exception");
-            throw new ApiException(e.getMessage());
-        } catch (IOException e) {
+        } catch (TransformerException | IOException e) {
             throw new ApiException(e.getMessage());
         } finally {
-            out.close();
+            if (out != null) {
+                out.close();
+            }
         }
     }
+
+
+    public OrderPojo getById(int orderId) {
+        return orderDao.getById(orderId);
+    }
+
+    public List<OrderPojo> getOrdersBetweenDates(ZonedDateTime start, ZonedDateTime end) {
+        return orderDao.getOrdersBetweenDates(start, end);
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.increff.pos.controller;
 
 import com.increff.pos.dto.ReportDto;
+import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.InventoryReportData;
 import com.increff.pos.model.data.SalesReportData;
 import com.increff.pos.model.forms.SalesReportForm;
@@ -21,8 +22,8 @@ public class ReportController {
 
     @ApiOperation(value = "gives the sales report encapsulated in SalesReportData")
     @RequestMapping(value = "/sales", method = RequestMethod.POST)
-    public SalesReportData salesReport(@RequestBody SalesReportForm salesReportForm) {
-//        2022-09-15T16:05:00.323070282+05:30[Asia/Kolkata]
+    public SalesReportData salesReport(@RequestBody SalesReportForm salesReportForm) throws ApiException {
+//        2022-09-15T16:05:00+05:30[Asia/Kolkata]
         return reportDto.salesReport(salesReportForm.getStartDateTime(), salesReportForm.getEndDateTime(), salesReportForm.getBrand(), salesReportForm.getCategory());
     }
 

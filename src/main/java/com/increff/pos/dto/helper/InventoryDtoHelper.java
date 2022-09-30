@@ -1,5 +1,6 @@
 package com.increff.pos.dto.helper;
 
+import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.InventoryData;
 import com.increff.pos.model.forms.InventoryForm;
 import com.increff.pos.pojo.InventoryPojo;
@@ -32,5 +33,35 @@ public class InventoryDtoHelper {
         inventoryPojo.setProductId(inventoryForm.getProductId());
         inventoryPojo.setQuantity(inventoryForm.getQuantity());
         return inventoryPojo;
+    }
+
+    public static List<InventoryPojo> convertToPojoList(List<InventoryForm> inventoryFormList) {
+        List<InventoryPojo> inventoryPojoList = new ArrayList<>();
+        for (InventoryForm inventoryForm : inventoryFormList) {
+            InventoryPojo inventoryPojo = new InventoryPojo();
+            inventoryPojo.setProductId(inventoryForm.getProductId());
+            inventoryPojo.setQuantity(inventoryForm.getQuantity());
+            inventoryPojoList.add(inventoryPojo);
+        }
+        return inventoryPojoList;
+    }
+
+    public static void validate(InventoryForm inventoryForm) throws ApiException {
+        if (inventoryForm == null) {
+            throw new ApiException("Input form should not be null.\n");
+        }
+        StringBuilder errorMsg = new StringBuilder();
+        if (inventoryForm.getProductId() == null || inventoryForm.getProductId() < 1) {
+            errorMsg.append("Invalid Product Id, ");
+        }
+        if (inventoryForm.getQuantity() == null || inventoryForm.getQuantity() < 0) {
+            errorMsg.append("Invalid Quantity, ");
+        }
+        if (errorMsg.length() != 0) {
+            errorMsg.deleteCharAt(errorMsg.length() - 1);
+            errorMsg.deleteCharAt(errorMsg.length() - 1);
+            errorMsg.append(".\n");
+            throw new ApiException(errorMsg.toString());
+        }
     }
 }

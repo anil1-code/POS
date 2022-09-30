@@ -6,17 +6,29 @@ fetchAndDisplayBrands();
 
 function showBulkUploadDialog() {
     $('#brand-bulk-upload-modal').modal('show');
+    $("#process-brand-data").attr("disabled", true);
+    $("#download-errors").attr("disabled", true);
+    $('#brandFile').val('');
+    $('#brandFileName').text('Choose file');
+    $('#brandFile').on("change", function () {
+        var file = $('#brandFile')[0].files[0].name;
+        $('#brandFileName').text(file);
+        $("#process-brand-data").removeAttr("disabled");
+    });
 }
 
-function showBrandModal(id) {
+function showBrandModal(button) {
     $('#edit-brand-modal').modal('show');
-    window.id = id;
+    $('#brand-update').attr('data-id', button.getAttribute('data-id'));
+    $('#inputEditName').val(button.getAttribute('data-bname'));
+    $('#inputEditCat').val(button.getAttribute('data-catname'));
 }
 
 function processData() {
     var file = $('#brandFile')[0].files[0];
     readFileData(file);
 }
+
 function readFileData(file) {
     var config = {
         header: true,
@@ -28,11 +40,12 @@ function readFileData(file) {
     }
     Papa.parse(file, config);
 }
+
 function uploadRows(fileData) {
     var json = "[";
     var x = 0;
     fileData.forEach(element => {
-        if(x == 0) {
+        if (x == 0) {
             x++;
         } else {
             json += ", ";
@@ -49,18 +62,21 @@ function uploadRows(fileData) {
             'Content-Type': 'application/json'
         },
         success: function (response) {
-            console.log("data uploaded successfully")
+            showSuccessToast("Successfully added");
+            $('#brand-bulk-upload-modal').modal('hide');
+            fetchAndDisplayBrands();
         },
         error: function (response) {
-            error_text = JSON.parse(response.responseText).message;
-            alert("Something went wrong, download errors for more info.")
+            $('#download-errors').attr('data-error', JSON.parse(response.responseText).message);
+            $("#download-errors").removeAttr("disabled");
+            showErrorToast("Something went wrong, download errors for more info.")
         }
     });
 }
-var error_text = "";
-function downloadErrors() {
+
+function downloadErrors(btn) {
     var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(error_text));
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(btn.getAttribute('data-error')));
     element.setAttribute('download', "errors.txt");
 
     element.style.display = 'none';
@@ -70,21 +86,22 @@ function downloadErrors() {
 
     document.body.removeChild(element);
 }
+
 function brandCatChecker(brand, category) {
     if (brand.length < 1) {
-        alert("Brand cannot be empty");
+        showErrorToast("Brand cannot be empty");
         return true;
     }
     if (category.length < 1) {
-        alert("Category cannot be empty");
+        showErrorToast("Category cannot be empty");
         return true;
     }
-    if (brand.length > 50) {
-        alert("Brand cannot have more than 50 chars");
+    if (brand.length > MAX_LENGTH) {
+        showErrorToast("Brand cannot have more than " + MAX_LENGTH + " chars");
         return true;
     }
-    if (category.length > 50) {
-        alert("Category cannot have more than 50 chars");
+    if (category.length > MAX_LENGTH) {
+        showErrorToast("Category cannot have more than " + MAX_LENGTH + " chars");
         return true;
     }
     return false;
@@ -101,22 +118,22 @@ function updateBrand() {
         + '", "categoryName": "' + category
         + '"}';
     $.ajax({
-        url: 'http://localhost:8000/pos/api/brands/update/' + id,
+        url: 'http://localhost:8000/pos/api/brands/update/' + $('#brand-update').attr('data-id'),
         type: 'PUT',
         data: json,
         headers: {
             'Content-Type': 'application/json'
         },
         success: function (response) {
-            console.log("Employee update " + response);
             fetchAndDisplayBrands();
+            $('#edit-brand-modal').modal('hide');
+            showSuccessToast('Successfully updated');
         },
         error: function (response) {
             var response = JSON.parse(response.responseText);
-            alert(response.message);
+            showErrorToast(response.message);
         }
     });
-    $('#edit-brand-modal').modal('hide');
 }
 
 function addBrand() {
@@ -125,10 +142,10 @@ function addBrand() {
     if (brandCatChecker(brand, category)) {
         return;
     }
-    var json = '[{'
-        + '"brandName": "' + brand
-        + '", "categoryName": "' + category
-        + '"}]';
+    var json = JSON.stringify([{
+        "brandName": brand,
+        "categoryName": category
+    }]);
     $.ajax({
         url: 'http://localhost:8000/pos/api/brands/add',
         type: 'POST',
@@ -137,17 +154,18 @@ function addBrand() {
             'Content-Type': 'application/json'
         },
         success: function (response) {
-            console.log("Employee added " + response);
-            fetchAndDisplayBrands();
             $("#inputName").val('');
             $("#inputCat").val('');
+            showSuccessToast("Successfully added");
+            fetchAndDisplayBrands();
         },
         error: function (response) {
             var response = JSON.parse(response.responseText);
-            alert(response.message);
+            showErrorToast(response.message);
         }
     });
 }
+
 function fetchAndDisplayBrands() {
     // now fetch the data
     $.ajax({
@@ -161,9 +179,9 @@ function fetchAndDisplayBrands() {
             $tbody.children('tr:not(:first)').remove();
             for (var i in data) {
                 var e = data[i];
-                var buttonHtml = '<button class="btn btn-danger" onclick="deleteBrand(' + e.id + ')">delete</button>';
-                buttonHtml += ' <button class="btn btn-warning" onclick="showBrandModal(' + e.id + ')">edit</button>';
+                var buttonHtml = '<button class="btn btn-warning" onclick="showBrandModal(this)" data-id="' + e.id + '" data-bname="' + e.brandName + '" data-catname="' + e.categoryName + '">Edit</button>';
                 var row = '<tr>'
+                    + '<td>' + parseInt((parseInt(i) + parseInt(1))) + '</td>'
                     + '<td>' + e.brandName + '</td>'
                     + '<td>' + e.categoryName + '</td>'
                     + '<td>' + buttonHtml + '</td>'
@@ -172,8 +190,7 @@ function fetchAndDisplayBrands() {
             }
         },
         error: function (response) {
-            var response = JSON.parse(response.responseText);
-            alert(response.message);
+            showErrorToast("Error while fetching data");
         }
     });
 }
