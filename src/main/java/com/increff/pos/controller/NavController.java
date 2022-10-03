@@ -43,6 +43,11 @@ public class NavController {
         return mav("view-orders.html");
     }
 
+    @RequestMapping(value = "/sales-report")
+    public ModelAndView salesReport() {
+        return mav("sales-report.html");
+    }
+
     private ModelAndView mav(String page) {
         ModelAndView mav = new ModelAndView(page);
         mav.addObject("info", new InfoData());

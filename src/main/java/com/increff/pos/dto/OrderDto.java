@@ -11,6 +11,8 @@ import com.increff.pos.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +72,8 @@ public class OrderDto {
         orderService.placeOrder(id);
     }
 
-    public void generateInvoice(int orderId) throws ApiException {
-        orderService.getOrderInvoice(orderId);
+    public File generateInvoice(int orderId) throws ApiException {
+        return orderService.getOrderInvoice(orderId);
     }
 
     public OrderData convertToData(OrderPojo orderPojo, List<OrderItemPojo> orderItemPojoList, List<ProductPojo> productPojoList) {

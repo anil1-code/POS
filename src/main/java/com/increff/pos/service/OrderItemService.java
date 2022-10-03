@@ -75,7 +75,7 @@ public class OrderItemService {
     @Transactional(readOnly = true)
     public Pair<List<OrderItemPojo>, List<ProductPojo>> getByOrderId(int orderId) throws ApiException {
         OrderPojo orderPojo = orderService.getById(orderId);
-        if(orderPojo == null) {
+        if (orderPojo == null) {
             throw new ApiException("Order doesn't exist");
         }
         List<OrderItemPojo> orderItemPojoList = orderItemDao.getByOrderId(orderId);

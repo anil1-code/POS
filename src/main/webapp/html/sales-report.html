@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="templates.html :: common_head"></head>
+
+<body>
+    <nav th:replace="templates.html :: common_navbar"></nav>
+    <div th:replace="templates.html :: general_toast"></div>
+
+    <div style="margin-top: 2vw; margin-left: 8vw">
+        <!-- <p style="font-size: 32px;">Sales Report</p> -->
+        <label for="start-date" style="font-size: 24px;">Start Date:</label>
+        &nbsp;
+        <input type="date" id="start-date">
+        &nbsp;&nbsp;&nbsp;
+        <label for="end-date" style="font-size: 24px;">End Date:</label>
+        &nbsp;
+        <input type="date" id="end-date">
+        &nbsp;&nbsp;&nbsp;
+        <select class="form-select" aria-label="Default select example"
+            style="display: inline-block; width: fit-content; font-size: 20px;" id="brand_dropdown">
+            <option selected>Select Brand</option>
+            <option value="1">One</option>
+        </select>
+        &nbsp;&nbsp;&nbsp;
+        <select class="form-select" aria-label="Default select example"
+            style="display: inline-block; width: fit-content; font-size: 20px;" id="category_dropdown">
+            <option selected>Select Category</option>
+            <option value="1">One</option>
+        </select>
+    </div>
+    <button type="button" class="btn btn-primary" id="addOrderItem" style="margin-top: 1vw; margin-left: 8vw;"
+        onclick="salesReport()">Download Sales Report</button>
+    <footer th:replace="templates.html :: common_footer"></footer>
+</body>
+<script>
+    $.ajax({
+        url: 'http://localhost:8000/pos/api/brands',
+        type: 'GET',
+        data: {},
+        dataType: 'json',
+        success: function (data) {
+            var brand_dd = document.getElementById('brand_dropdown');
+            var category_dd = document.getElementById('category_dropdown');
+            const brand_mp = new Map();
+            const category_mp = new Map();
+            const all_brands = new Set();
+            const all_cats = new Set();
+            for (var i in data) {
+                brand_mp[data[i].brandName] = brand_mp[data[i].brandName] || [];
+                brand_mp[data[i].brandName].push(data[i].categoryName);
+                category_mp[data[i].categoryName] = category_mp[data[i].categoryName] || [];
+                category_mp[data[i].categoryName].push(data[i].brandName);
+                all_brands.add(data[i].brandName);
+                all_cats.add(data[i].categoryName);
+            }
+            $('#brand_dropdown').children('option:not(:first)').remove();
+            $('#category_dropdown').children('option:not(:first)').remove();
+            for (const item of all_brands) {
+                var w = '<option>' + item + '</option>';
+                $('#brand_dropdown').append(w);
+            }
+            for (const item of all_cats) {
+                var w = '<option>' + item + '</option>';
+                $('#category_dropdown').append(w);
+            }
+            brand_dd.addEventListener("change", function () {
+                var b = brand_dd.options[brand_dd.selectedIndex].text;
+                var c = category_dd.options[category_dd.selectedIndex].text;
+                $('#category_dropdown').children('option:not(:first)').remove();
+                if (b == 'Select Brand') {
+                    for (const item of all_cats) {
+                        var w = '<option>' + item + '</option>';
+                        $('#category_dropdown').append(w);
+                    }
+                } else {
+                    brand_mp[b].forEach(element => {
+                        var w = '';
+                        if (element == c) {
+                            w = '<option selected>' + element + '</option>';
+                        } else {
+                            w = '<option>' + element + '</option>';
+                        }
+                        $('#category_dropdown').append(w);
+                    });
+                }
+            });
+            category_dd.addEventListener("change", function () {
+                var c = category_dd.options[category_dd.selectedIndex].text;
+                var b = brand_dd.options[brand_dd.selectedIndex].text;
+                $('#brand_dropdown').children('option:not(:first)').remove();
+                if (c == 'Select Category') {
+                    for (const item of all_brands) {
+                        var w = '<option>' + item + '</option>';
+                        $('#brand_dropdown').append(w);
+                    }
+                } else {
+                    category_mp[c].forEach(element => {
+                        var w = '';
+                        if (element == b) {
+                            w = '<option selected>' + element + '</option>';
+                        } else {
+                            w = '<option>' + element + '</option>';
+                        }
+                        $('#brand_dropdown').append(w);
+                    });
+                }
+            });
+        },
+        error: function (data) {
+            showErrorToast("Can't fetch data from database");
+        }
+    });
+    function checker(sdate, edate) {
+        if(Date.parse(sdate)) {
+            
+        } else {
+            return;
+        }
+        if(Date.parse(edate)) {
+
+        } else {
+            return;
+        }
+    }
+    function salesReport() {
+        var sdate = new Date($('#start-date').val());
+        var edate = new Date($('#end-date').val());
+        if(isNaN(sdate.getFullYear()) || isNaN(sdate.getMonth()) || isNaN(sdate.getDate()) || isNaN(edate.getFullYear()) || isNaN(edate.getMonth()) || isNaN(edate.getDate())) {
+            showErrorToast('Invalid date');
+            return;
+        }
+        var json = JSON.stringify({
+            "startDateTime": sdate.getFullYear() + '-' + (sdate.getMonth() < 10 ? '0' : '') + sdate.getMonth() + '-' + sdate.getDate() + 'T00:00:00+05:30[Asia/Kolkata]',
+            "endDateTime": edate.getFullYear() + '-' + (edate.getMonth() < 10 ? '0' : '') + edate.getMonth() + '-' + edate.getDate() + 'T23:59:59+05:30[Asia/Kolkata]',
+            "brand": ($('#brand_dropdown').val == 'Select Brand') ? null : $('#brand_dropdown').val,
+            "category": ($('#category_dropdown').val == 'Select Category') ? null : $('#category_dropdown').val
+        });
+        console.log(json);
+        $.ajax({
+            url: 'http://localhost:8000/pos/api/reports/sales',
+            type: 'POST',
+            data: json,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: function (data) {
+                var tsv_content = 'Category\tQuantity\tRevenue\n';
+                data.salesReportSingleRowDataList.forEach(row => {
+                    tsv_content += row.category + '\t' + row.quantity + '\t' + row.revenue + '\n';
+                });
+                var element = document.createElement('a');
+                element.setAttribute('href', 'data:text/tsv;charset=utf-8,' + encodeURIComponent(tsv_content));
+                element.setAttribute('download', "inventoryReport.tsv");
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            },
+            error: function (response) {
+                var response = JSON.parse(response.responseText);
+                showErrorToast(response.message);
+            }
+        });
+    }
+</script>
+
+</html>

@@ -87,35 +87,28 @@ function showOrderItems(btn) {
 }
 
 function generateInvoice(id) {
-    $.ajax({
-        url: 'http://localhost:8000/pos/api/orders/invoice/' + id,
-        type: 'POST',
-        data: {},
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        success: function (data) {
-            // download the pdf
-            // <a href="static/products.tsv" target="_blank">Download Sample</a>
-            var element = document.createElement('a');
-            element.setAttribute('href', '../resources/Invoice/invoice' + id + '.pdf');
-            element.setAttribute('target', "_blank");
-            element.style.display = 'none';
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
-        },
-        error: function (response) {
-            var response = JSON.parse(response.responseText);
-            showErrorToast(response.message);
-        }
-    });
+    window.open(
+        'http://localhost:8000/pos/api/orders/invoice/' + id,
+        '_blank' // <- This is what makes it open in a new window.
+    );
+    // $.ajax({
+    //     url: 'http://localhost:8000/pos/api/orders/invoice/' + id,
+    //     contentType: 'application/pdf',
+    //     type: 'GET',
+    //     success: function (data) {
+    //         console.log(data);
+    //         showSuccessToast('Successfully generated');
+    //     },
+    //     error: function (response) {
+    //         var response = JSON.parse(response.responseText);
+    //         showErrorToast(response.message);
+    //     }
+    // });
 }
 
 function editOrder(id) {
     window.location = base_url + "/place-order/" + id;
 }
-
 
 // TODO: change modal style a bit
 // TODO: change place order to edit order

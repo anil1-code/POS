@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -90,8 +91,8 @@ public class OrderService {
             // empty order cant be placed
             throw new ApiException("Empty order can't be placed");
         }
-        // reduce the inventory
         int i = 0;
+        // reduce the inventory
         StringBuilder errorMsg = new StringBuilder();
         for (OrderItemPojo orderItemPojo : pairedPojoList.fst) {
             InventoryPojo inventoryPojo = inventoryService.getByProductId(orderItemPojo.getProductId());
@@ -111,7 +112,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public void getOrderInvoice(int orderId) throws ApiException {
+    public File getOrderInvoice(int orderId) throws ApiException {
         ZonedDateTime time = getById(orderId).getZonedDateTime();
         if (time == null) {
             throw new ApiException("Order isn't placed yet.\n");
@@ -122,7 +123,7 @@ public class OrderService {
             total += orderItemPojo.getQuantity() * orderItemPojo.getSellingPrice();
         }
         InvoiceData invoiceData = new InvoiceData(OrderItemDtoHelper.convertPojoListToDataList(pairedPojoList.fst, pairedPojoList.snd), time, total, orderId);
-        String invoice = "main/webapp/Invoice/invoice" + orderId + ".pdf";
+        String invoice = "main/resources/Invoice/invoice" + orderId + ".pdf";
         String xml = jaxbObjectToXML(invoiceData);
         File xsltFile = new File("src", "main/resources/com/increff/pos/invoice.xml");
         File pdfFile = new File("src", invoice);
@@ -131,6 +132,7 @@ public class OrderService {
         } catch (IOException e) {
             throw new ApiException(e.getMessage());
         }
+        return pdfFile;
     }
 
     // HELPER methods, these are supposed to be called from a transactional method

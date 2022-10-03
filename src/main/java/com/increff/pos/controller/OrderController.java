@@ -1,5 +1,6 @@
 package com.increff.pos.controller;
 
+import com.google.common.io.ByteStreams;
 import com.increff.pos.dto.OrderDto;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.OrderData;
@@ -12,6 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Api
@@ -46,8 +52,16 @@ public class OrderController {
     }
 
     @ApiOperation(value = "generate the invoice")
-    @RequestMapping(value = "/invoice/{orderId}", method = RequestMethod.POST)
-    public void generateInvoice(@PathVariable int orderId) throws ApiException {
-        orderDto.generateInvoice(orderId);
+    @RequestMapping(value = "/invoice/{orderId}", method = RequestMethod.GET)
+    public void generateInvoice(@PathVariable int orderId, HttpServletResponse response) throws ApiException {
+        try {
+            File document = orderDto.generateInvoice(orderId);
+            InputStream is = new FileInputStream(document);
+            ByteStreams.copy(is, response.getOutputStream());
+            response.setContentType("application/pdf");
+            response.flushBuffer();
+        } catch (IOException e) {
+            throw new ApiException("Error while invoice generation");
+        }
     }
 }
