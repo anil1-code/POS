@@ -132,7 +132,7 @@ function updateProduct() {
     }
     var json = JSON.stringify({
         "name": name,
-        "barcode": "barcode",
+        "barcode": "barcode", // not gonna use
         "brandCategory": brandCatId,
         "mrp": mrp
     });

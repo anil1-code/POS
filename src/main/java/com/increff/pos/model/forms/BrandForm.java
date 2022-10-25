@@ -11,5 +11,4 @@ public class BrandForm {
     private String brandName;
     @NotNull
     private String categoryName;
-
 }

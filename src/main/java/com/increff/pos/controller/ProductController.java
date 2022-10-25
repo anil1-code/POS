@@ -32,12 +32,6 @@ public class ProductController {
         return productDto.add(productFormList);
     }
 
-    @ApiOperation(value = "delete a product by its id")
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable int id) {
-        // productDto.delete(id);
-    }
-
     @ApiOperation(value = "update a product by its id")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
     public ProductPojo update(@PathVariable int id, @RequestBody ProductForm productForm) throws ApiException {

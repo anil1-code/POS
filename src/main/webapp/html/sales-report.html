@@ -131,8 +131,8 @@
             return;
         }
         var json = JSON.stringify({
-            "startDateTime": sdate.getFullYear() + '-' + (sdate.getMonth() < 10 ? '0' : '') + sdate.getMonth() + '-' + sdate.getDate() + 'T00:00:00+05:30[Asia/Kolkata]',
-            "endDateTime": edate.getFullYear() + '-' + (edate.getMonth() < 10 ? '0' : '') + edate.getMonth() + '-' + edate.getDate() + 'T23:59:59+05:30[Asia/Kolkata]',
+            "startDateTime": sdate.getFullYear() + '-' + (sdate.getMonth() < 10 ? '0' : '') + sdate.getMonth() + '-' + (sdate.getDate() < 10 ? '0' : '') + sdate.getDate() + 'T00:00:00+05:30[Asia/Kolkata]',
+            "endDateTime": edate.getFullYear() + '-' + (edate.getMonth() < 10 ? '0' : '') + edate.getMonth() + '-' + (edate.getDate() < 10 ? '0' : '') + edate.getDate() + 'T23:59:59+05:30[Asia/Kolkata]',
             "brand": ($('#brand_dropdown').val == 'Select Brand') ? null : $('#brand_dropdown').val,
             "category": ($('#category_dropdown').val == 'Select Category') ? null : $('#category_dropdown').val
         });

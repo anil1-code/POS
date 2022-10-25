@@ -1,5 +1,6 @@
 package com.increff.pos.dto;
 
+import com.google.common.io.ByteStreams;
 import com.increff.pos.dto.helper.OrderItemDtoHelper;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.OrderData;
@@ -12,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,33 +27,9 @@ public class OrderDto {
     @Autowired
     private OrderService orderService;
 
-    public OrderPojo add() throws ApiException {
-//        if (orderForm.getOrderItemIds().size() == 0) {
-//            throw new ApiException("There are no order items placed in this transaction ");
-//        }
-//        for (Integer orderItemId : orderForm.getOrderItemIds()) {
-//            if (orderItemId == null) {
-//                throw new ApiException("OrderItem id cannot be null ");
-//            }
-//            OrderItemPojo orderItemPojo = orderItemService.getByOrderItemId(orderItemId);
-//            int updatedQuantity = inventoryService.getByProductId(orderItemPojo.getProductId()).getQuantity() - orderItemPojo.getQuantity();
-//            if (updatedQuantity < 0) {
-//                throw new ApiException("insufficient inventory"); // ask whether they need which order item(s) is giving this error
-//            }
-//            InventoryPojo inventoryPojo = new InventoryPojo();
-//            inventoryPojo.setProductId(orderItemPojo.getProductId());
-//            inventoryPojo.setQuantity(updatedQuantity);
-//            inventoryService.update(orderItemPojo.getProductId(), inventoryPojo);
-//        }
+    public OrderPojo add() {
         OrderPojo addedPojo = new OrderPojo();
-//        addedPojo.setZonedDateTime(ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         orderService.add(addedPojo);
-//        for (Integer id : orderForm.getOrderItemIds()) {
-//            if (orderItemService.getByOrderItemId(id).getOrderId() != 0) {
-//                throw new ApiException("Already placed order\n");
-//            }
-//            orderItemService.updateOrderId(id, addedPojo.getId());
-//        }
         return addedPojo;
     }
 
@@ -72,8 +53,16 @@ public class OrderDto {
         orderService.placeOrder(id);
     }
 
-    public File generateInvoice(int orderId) throws ApiException {
-        return orderService.getOrderInvoice(orderId);
+    public void generateInvoice(int orderId, HttpServletResponse response) throws ApiException {
+        File document = orderService.getOrderInvoice(orderId);
+        try {
+            InputStream is = new FileInputStream(document);
+            ByteStreams.copy(is, response.getOutputStream());
+            response.setContentType("application/pdf");
+            response.flushBuffer();
+        } catch (IOException e) {
+            throw new ApiException("Error while invoice generation");
+        }
     }
 
     public OrderData convertToData(OrderPojo orderPojo, List<OrderItemPojo> orderItemPojoList, List<ProductPojo> productPojoList) {

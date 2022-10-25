@@ -41,7 +41,7 @@ public class OrderService {
     private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     @Transactional(rollbackFor = ApiException.class)
-    public OrderPojo add(OrderPojo orderPojo) throws ApiException {
+    public OrderPojo add(OrderPojo orderPojo) {
         orderDao.add(orderPojo);
         return orderPojo;
     }
@@ -113,7 +113,11 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public File getOrderInvoice(int orderId) throws ApiException {
-        ZonedDateTime time = getById(orderId).getZonedDateTime();
+        OrderPojo orderPojo = getById(orderId);
+        if (orderPojo == null) {
+            throw new ApiException("Order doesn't exist.\n");
+        }
+        ZonedDateTime time = orderPojo.getZonedDateTime();
         if (time == null) {
             throw new ApiException("Order isn't placed yet.\n");
         }

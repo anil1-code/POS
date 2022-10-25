@@ -42,14 +42,11 @@ public class ProductDtoHelper {
         if (BasicDataUtil.length(productForm.getBarcode()) > Const.MAX_LENGTH) {
             errorMsg.append("Product barcode should not exceed the maximum length(" + Const.MAX_LENGTH + "), ");
         }
-        if (productForm.getMrp() == null) {
-            errorMsg.append("Product MRP should not be null, ");
-        } else {
-            productForm.setMrp(BasicDataUtil.roundOffDouble(productForm.getMrp()));
-            if (productForm.getMrp() < 0) {
-                errorMsg.append("Product MRP cannot be negative, ");
-            }
+        productForm.setMrp(BasicDataUtil.roundOffDouble(productForm.getMrp()));
+        if (productForm.getMrp() < 0) {
+            errorMsg.append("Product MRP cannot be negative, ");
         }
+
         if (errorMsg.length() != 0) {
             errorMsg.deleteCharAt(errorMsg.length() - 1);
             errorMsg.deleteCharAt(errorMsg.length() - 1);

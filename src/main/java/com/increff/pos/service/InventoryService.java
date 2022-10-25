@@ -46,6 +46,7 @@ public class InventoryService {
                 errorMsg.append(isBulkAdd ? ("row " + row + ": ") : "").append("Inventory already added.\n");
             } else {
                 inventoryDao.add(inventoryPojo);
+                addedPojoList.add(inventoryPojo);
             }
             row++;
         }
@@ -53,11 +54,6 @@ public class InventoryService {
             throw new ApiException(errorMsg.toString());
         }
         return addedPojoList;
-    }
-
-    @Transactional(rollbackFor = ApiException.class)
-    public void delete(int id) {
-        inventoryDao.delete(id);
     }
 
     @Transactional(rollbackFor = ApiException.class)

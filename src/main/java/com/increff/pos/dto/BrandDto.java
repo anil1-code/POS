@@ -48,10 +48,6 @@ public class BrandDto {
         return BrandDtoHelper.convertToDataList(brandPojoList);
     }
 
-    public void delete(int id) {
-        brandService.delete(id);
-    }
-
     /*
      * updates the BrandPojo with id given
      */

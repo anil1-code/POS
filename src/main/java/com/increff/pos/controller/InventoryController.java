@@ -31,12 +31,6 @@ public class InventoryController {
         return inventoryDto.add(inventoryFormList);
     }
 
-    @ApiOperation(value = "delete an inventory by its id")
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable int id) {
-        inventoryDto.delete(id);
-    }
-
     @ApiOperation(value = "update an inventory by its id")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
     public InventoryPojo update(@PathVariable int id, @RequestBody InventoryForm inventoryForm) throws ApiException {

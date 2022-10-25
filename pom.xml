@@ -17,6 +17,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>5.3.22</spring.version>
+        <h2.version>1.4.200</h2.version>
         <swagger.version>2.4.0</swagger.version>
         <junit.version>4.12</junit.version>
         <javax.servlet.version>4.0.1</javax.servlet.version>
@@ -71,6 +72,13 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Using Swagger for REST API documentation -->

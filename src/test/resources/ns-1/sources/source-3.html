@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OrderDto</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.increff.pos.dto</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderDto (com.increff.pos.dto)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderDto</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4%
+  </span>
+  <span class="absValue">
+    (1/25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.increff.pos.dto;
+&nbsp;
+&nbsp;import com.increff.pos.dto.helper.OrderItemDtoHelper;
+&nbsp;import com.increff.pos.exception.ApiException;
+&nbsp;import com.increff.pos.model.data.OrderData;
+&nbsp;import com.increff.pos.pojo.OrderItemPojo;
+&nbsp;import com.increff.pos.pojo.OrderPojo;
+&nbsp;import com.increff.pos.pojo.ProductPojo;
+&nbsp;import com.increff.pos.service.OrderService;
+&nbsp;import com.increff.pos.util.Pair;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpServletResponse;
+&nbsp;import java.io.File;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class OrderDto {</b>
+&nbsp;    @Autowired
+&nbsp;    private OrderService orderService;
+&nbsp;
+&nbsp;    public OrderPojo add() throws ApiException {
+&nbsp;//        if (orderForm.getOrderItemIds().size() == 0) {
+&nbsp;//            throw new ApiException(&quot;There are no order items placed in this transaction &quot;);
+&nbsp;//        }
+&nbsp;//        for (Integer orderItemId : orderForm.getOrderItemIds()) {
+&nbsp;//            if (orderItemId == null) {
+&nbsp;//                throw new ApiException(&quot;OrderItem id cannot be null &quot;);
+&nbsp;//            }
+&nbsp;//            OrderItemPojo orderItemPojo = orderItemService.getByOrderItemId(orderItemId);
+&nbsp;//            int updatedQuantity = inventoryService.getByProductId(orderItemPojo.getProductId()).getQuantity() - orderItemPojo.getQuantity();
+&nbsp;//            if (updatedQuantity &lt; 0) {
+&nbsp;//                throw new ApiException(&quot;insufficient inventory&quot;); // ask whether they need which order item(s) is giving this error
+&nbsp;//            }
+&nbsp;//            InventoryPojo inventoryPojo = new InventoryPojo();
+&nbsp;//            inventoryPojo.setProductId(orderItemPojo.getProductId());
+&nbsp;//            inventoryPojo.setQuantity(updatedQuantity);
+&nbsp;//            inventoryService.update(orderItemPojo.getProductId(), inventoryPojo);
+&nbsp;//        }
+<b class="nc">&nbsp;        OrderPojo addedPojo = new OrderPojo();</b>
+&nbsp;//        addedPojo.setZonedDateTime(ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+<b class="nc">&nbsp;        orderService.add(addedPojo);</b>
+&nbsp;//        for (Integer id : orderForm.getOrderItemIds()) {
+&nbsp;//            if (orderItemService.getByOrderItemId(id).getOrderId() != 0) {
+&nbsp;//                throw new ApiException(&quot;Already placed order\n&quot;);
+&nbsp;//            }
+&nbsp;//            orderItemService.updateOrderId(id, addedPojo.getId());
+&nbsp;//        }
+<b class="nc">&nbsp;        return addedPojo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;OrderData&gt; getAll() {
+<b class="nc">&nbsp;        List&lt;OrderData&gt; orderDataList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        Pair&lt;List&lt;OrderPojo&gt;, Pair&lt;List&lt;List&lt;OrderItemPojo&gt;&gt;, List&lt;List&lt;ProductPojo&gt;&gt;&gt;&gt; pairedPojos = orderService.getAll();</b>
+<b class="nc">&nbsp;        int i = 0;</b>
+<b class="nc">&nbsp;        for (OrderPojo orderPojo : pairedPojos.fst) {</b>
+<b class="nc">&nbsp;            List&lt;OrderItemPojo&gt; orderItemPojoList = pairedPojos.snd.fst.get(i);</b>
+<b class="nc">&nbsp;            List&lt;ProductPojo&gt; productPojoList = pairedPojos.snd.snd.get(i++);</b>
+<b class="nc">&nbsp;            orderDataList.add(convertToData(orderPojo, orderItemPojoList, productPojoList));</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return orderDataList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void delete(int id) throws ApiException {
+<b class="nc">&nbsp;        orderService.delete(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void placeOrder(int id) throws ApiException {
+<b class="nc">&nbsp;        orderService.placeOrder(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public File generateInvoice(int orderId) throws ApiException {
+<b class="nc">&nbsp;        return orderService.getOrderInvoice(orderId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public OrderData convertToData(OrderPojo orderPojo, List&lt;OrderItemPojo&gt; orderItemPojoList, List&lt;ProductPojo&gt; productPojoList) {
+<b class="nc">&nbsp;        OrderData orderData = new OrderData();</b>
+<b class="nc">&nbsp;        orderData.setId(orderPojo.getId());</b>
+<b class="nc">&nbsp;        if (orderPojo.getZonedDateTime() == null) {</b>
+<b class="nc">&nbsp;            orderData.setDateTime(&quot;Not placed yet&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            DateTimeFormatter formatter =</b>
+<b class="nc">&nbsp;                    DateTimeFormatter.ofPattern(&quot;MM/dd/yyyy - HH:mm&quot;);</b>
+<b class="nc">&nbsp;            orderData.setDateTime(orderPojo.getZonedDateTime().format(formatter));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        orderData.setOrderItemDataList(OrderItemDtoHelper.convertPojoListToDataList(orderItemPojoList, productPojoList));</b>
+<b class="nc">&nbsp;        return orderData;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-04 14:05</div>
+</div>
+</body>
+</html>

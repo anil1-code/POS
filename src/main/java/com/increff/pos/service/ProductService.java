@@ -26,11 +26,12 @@ public class ProductService {
         boolean isBulkAdd = productPojoList.size() > 1;
         List<ProductPojo> addedPojoList = new ArrayList<>();
         for (ProductPojo productPojo : productPojoList) {
-            String rowError = productChecker(productPojo);
+            String rowError = productChecker(productPojo, true);
             if (!rowError.isEmpty()) {
                 errorMsg.append(isBulkAdd ? ("row " + row + ": ") : "").append(rowError);
             } else {
-                productDao.add(productPojo);
+                ProductPojo addedPojo = productDao.add(productPojo);
+                addedPojoList.add(addedPojo);
             }
             row++;
         }
@@ -52,17 +53,12 @@ public class ProductService {
     }
 
     @Transactional(rollbackFor = ApiException.class)
-    public void delete(int id) {
-        productDao.delete(id);
-    }
-
-    @Transactional(rollbackFor = ApiException.class)
     public ProductPojo update(int id, ProductPojo productPojo) throws ApiException {
-        String error = productChecker(productPojo);
+        String error = productChecker(productPojo, false);
         if (!error.isEmpty()) {
             throw new ApiException(error);
         }
-        ProductPojo existingPojo = productDao.getById(id);
+        ProductPojo existingPojo = getById(id);
         if (existingPojo == null) {
             throw new ApiException("No product exists for this ID: " + id);
         }
@@ -77,13 +73,13 @@ public class ProductService {
         return productDao.getById(id);
     }
 
-    private String productChecker(ProductPojo productPojo) {
+    private String productChecker(ProductPojo productPojo, boolean isAdd) {
         StringBuilder errorMsg = new StringBuilder();
-        if (productDao.getByBarcode(productPojo.getBarcode()) != null) {
-            errorMsg.append("Barcode already exists for this product, ");
-        }
         if (brandService.getById(productPojo.getBrandCategory()) == null) {
             errorMsg.append("Brand Category ID does not exists, ");
+        }
+        if (isAdd && productDao.getByBarcode(productPojo.getBarcode()) != null) {
+            errorMsg.append("Barcode already exists, ");
         }
         if (errorMsg.length() > 0) {
             errorMsg.deleteCharAt(errorMsg.length() - 1);

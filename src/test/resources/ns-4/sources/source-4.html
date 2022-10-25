@@ -1,0 +1,162 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OrderItemDto</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.increff.pos.dto</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderItemDto (com.increff.pos.dto)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderItemDto</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.increff.pos.dto;
+&nbsp;
+&nbsp;import com.increff.pos.dto.helper.OrderItemDtoHelper;
+&nbsp;import com.increff.pos.exception.ApiException;
+&nbsp;import com.increff.pos.model.data.OrderItemData;
+&nbsp;import com.increff.pos.model.forms.OrderItemForm;
+&nbsp;import com.increff.pos.pojo.OrderItemPojo;
+&nbsp;import com.increff.pos.pojo.ProductPojo;
+&nbsp;import com.increff.pos.service.OrderItemService;
+&nbsp;import com.increff.pos.util.Pair;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class OrderItemDto {</b>
+&nbsp;    @Autowired
+&nbsp;    private OrderItemService orderItemService;
+&nbsp;
+&nbsp;    public List&lt;OrderItemData&gt; getAll() {
+<b class="fc">&nbsp;        Pair&lt;List&lt;OrderItemPojo&gt;, List&lt;ProductPojo&gt;&gt; pairedPojoList = orderItemService.getAll();</b>
+<b class="fc">&nbsp;        return OrderItemDtoHelper.convertPojoListToDataList(pairedPojoList.fst, pairedPojoList.snd);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public OrderItemPojo add(OrderItemForm orderItemForm) throws ApiException {
+<b class="fc">&nbsp;        String error = OrderItemDtoHelper.validate(orderItemForm);</b>
+<b class="fc">&nbsp;        if (!error.isEmpty()) {</b>
+<b class="fc">&nbsp;            throw new ApiException(error);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return orderItemService.add(OrderItemDtoHelper.convertFormToPojo(orderItemForm));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public OrderItemPojo update(int id, OrderItemForm orderItemForm) throws ApiException {
+<b class="fc">&nbsp;        String error = OrderItemDtoHelper.validate(orderItemForm);</b>
+<b class="fc">&nbsp;        if (!error.isEmpty()) {</b>
+<b class="fc">&nbsp;            throw new ApiException(error);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return orderItemService.update(id, OrderItemDtoHelper.convertFormToPojo(orderItemForm));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;OrderItemData&gt; getByOrderId(int orderId) throws ApiException {
+<b class="fc">&nbsp;        Pair&lt;List&lt;OrderItemPojo&gt;, List&lt;ProductPojo&gt;&gt; pairedPojoList = orderItemService.getByOrderId(orderId);</b>
+<b class="fc">&nbsp;        return OrderItemDtoHelper.convertPojoListToDataList(pairedPojoList.fst, pairedPojoList.snd);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void delete(int id) {
+<b class="fc">&nbsp;        orderItemService.delete(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public OrderItemData getByOrderItemId(int orderItemId) {
+<b class="fc">&nbsp;        Pair&lt;OrderItemPojo, ProductPojo&gt; pairedPojos = orderItemService.getByOrderItemId(orderItemId);</b>
+<b class="fc">&nbsp;        return OrderItemDtoHelper.convertPojoToData(pairedPojos.fst, pairedPojos.snd);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteByOrderId(int orderId) throws ApiException {
+<b class="fc">&nbsp;        orderItemService.deleteByOrderId(orderId);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-06 16:40</div>
+</div>
+</body>
+</html>

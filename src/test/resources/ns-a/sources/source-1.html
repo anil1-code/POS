@@ -1,0 +1,188 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > BrandService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.increff.pos.service</a>
+</div>
+
+<h1>Coverage Summary for Class: BrandService (com.increff.pos.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BrandService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (27/27)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">BrandService$$EnhancerBySpringCGLIB$$469e3c8</td>
+  </tr>
+  <tr>
+    <td class="name">BrandService$$EnhancerBySpringCGLIB$$469e3c8$$FastClassBySpringCGLIB$$efd7328c</td>
+  </tr>
+  <tr>
+    <td class="name">BrandService$$FastClassBySpringCGLIB$$45e56e4b</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (27/27)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.increff.pos.service;
+&nbsp;
+&nbsp;import com.increff.pos.dao.BrandDao;
+&nbsp;import com.increff.pos.exception.ApiException;
+&nbsp;import com.increff.pos.pojo.BrandPojo;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class BrandService {</b>
+&nbsp;    @Autowired
+&nbsp;    private BrandDao brandDao;
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;BrandPojo&gt; getAll() {
+<b class="fc">&nbsp;        return brandDao.getAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(rollbackFor = ApiException.class)
+&nbsp;    public List&lt;BrandPojo&gt; add(List&lt;BrandPojo&gt; brandPojoList) throws ApiException {
+<b class="fc">&nbsp;        StringBuilder errorMsg = new StringBuilder();</b>
+<b class="fc">&nbsp;        int row = 1;</b>
+<b class="fc">&nbsp;        boolean isBulkAdd = brandPojoList.size() &gt; 1; // will be true if the data was sent via tsv</b>
+<b class="fc">&nbsp;        List&lt;BrandPojo&gt; addedPojoList = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (BrandPojo brandPojo : brandPojoList) {</b>
+<b class="fc">&nbsp;            if (exists(brandPojo.getBrandName(), brandPojo.getCategoryName())) {</b>
+<b class="fc">&nbsp;                errorMsg.append(isBulkAdd ? (&quot;row &quot; + row + &quot;: &quot;) : &quot;&quot;).append(&quot;Brand Category combination already exists.\n&quot;); // append this exception message</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                BrandPojo addedPojo = brandDao.add(brandPojo);</b>
+<b class="fc">&nbsp;                addedPojoList.add(addedPojo);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            row++;</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        if (errorMsg.length() &gt; 0) {</b>
+<b class="fc">&nbsp;            throw new ApiException(errorMsg.toString());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return addedPojoList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(rollbackFor = ApiException.class)
+&nbsp;    public BrandPojo update(int id, BrandPojo brandPojo) throws ApiException {
+<b class="fc">&nbsp;        BrandPojo existingPojo = getById(id);</b>
+<b class="fc">&nbsp;        if (existingPojo == null) {</b>
+<b class="fc">&nbsp;            throw new ApiException(&quot;No Brand Category exists for this ID: &quot; + id);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (exists(brandPojo.getBrandName(), brandPojo.getCategoryName())) {</b>
+<b class="fc">&nbsp;            throw new ApiException(&quot;Brand Category combination already exists&quot;); // what if it(bc) was same</b>
+&nbsp;        }
+<b class="fc">&nbsp;        existingPojo.setBrandName(brandPojo.getBrandName());</b>
+<b class="fc">&nbsp;        existingPojo.setCategoryName(brandPojo.getCategoryName());</b>
+<b class="fc">&nbsp;        return brandDao.update(existingPojo);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    // HELPER methods, these are supposed to be called from a transactional method
+&nbsp;    private boolean exists(String brand, String category) {
+<b class="fc">&nbsp;        BrandPojo brandPojo = brandDao.getByBrandCategory(brand, category);</b>
+<b class="fc">&nbsp;        return brandPojo != null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BrandPojo getById(int id) {
+<b class="fc">&nbsp;        return brandDao.getById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-06 16:40</div>
+</div>
+</body>
+</html>

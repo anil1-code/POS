@@ -1,7 +1,7 @@
-package com.increff.pos.dto;
+package com.increff.pos;
 
-import com.increff.pos.AbstractUnitTest;
 import com.increff.pos.constants.Const;
+import com.increff.pos.dto.BrandDto;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.BrandData;
 import com.increff.pos.model.forms.BrandForm;
@@ -81,8 +81,8 @@ public class BrandDtoTest extends AbstractUnitTest {
         }
     }
 
-    @Test
-    public void testTrimLC() {
+    @Test(expected = ApiException.class)
+    public void testTrimLCDup() throws ApiException {
         List<BrandForm> rows = new ArrayList<>();
         BrandForm brandForm = new BrandForm();
         brandForm.setCategoryName("  C  C  ");
@@ -94,8 +94,36 @@ public class BrandDtoTest extends AbstractUnitTest {
             assertEquals(added.size(), 1);
             assertEquals(added.get(0).getBrandName(), "b  b");
             assertEquals(added.get(0).getCategoryName(), "c  c");
+            brandDto.add(rows);
         } catch (ApiException e) {
-            fail();
+            assertEquals(e.getMessage(), "Brand Category combination already exists.\n");
+            throw e;
+        }
+    }
+
+    @Test(expected = ApiException.class)
+    public void testUpdateNullIDDup() throws ApiException {
+        BrandForm brandForm = new BrandForm();
+        brandForm.setBrandName("b");
+        brandForm.setCategoryName("c");
+        int cnt = 0;
+        try {
+            brandDto.update(10, brandForm);
+        } catch (ApiException e) {
+            assertEquals(e.getMessage(), "No Brand Category exists for this ID: 10");
+            cnt++;
+        }
+        List<BrandForm> rows = new ArrayList<>();
+        rows.add(brandForm);
+        BrandPojo brandPojo = brandDto.add(rows).get(0);
+        try {
+            brandDto.update(brandPojo.getId(), brandForm);
+        } catch (ApiException e) {
+            assertEquals(e.getMessage(), "Brand Category combination already exists");
+            cnt++;
+        }
+        if (cnt == 2) {
+            throw new ApiException("");
         }
     }
 

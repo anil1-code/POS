@@ -1,0 +1,220 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ReportService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.increff.pos.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ReportService (com.increff.pos.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ReportService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (17/51)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ReportService$$EnhancerBySpringCGLIB$$c9009cb3</td>
+  </tr>
+  <tr>
+    <td class="name">ReportService$$EnhancerBySpringCGLIB$$c9009cb3$$FastClassBySpringCGLIB$$e60fade6</td>
+  </tr>
+  <tr>
+    <td class="name">ReportService$$FastClassBySpringCGLIB$$59d69964</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (17/51)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.increff.pos.service;
+&nbsp;
+&nbsp;import com.increff.pos.dao.ReportDao;
+&nbsp;import com.increff.pos.exception.ApiException;
+&nbsp;import com.increff.pos.model.data.InventoryReportData;
+&nbsp;import com.increff.pos.model.data.InventoryReportSingleRowData;
+&nbsp;import com.increff.pos.model.data.SalesReportData;
+&nbsp;import com.increff.pos.model.data.SalesReportSingleRowData;
+&nbsp;import com.increff.pos.pojo.*;
+&nbsp;import com.increff.pos.util.BasicDataUtil;
+&nbsp;import com.increff.pos.util.Pair;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.time.ZonedDateTime;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class ReportService {</b>
+&nbsp;    @Autowired
+&nbsp;    private ReportDao reportDao;
+&nbsp;    @Autowired
+&nbsp;    private OrderService orderService;
+&nbsp;    @Autowired
+&nbsp;    private OrderItemService orderItemService;
+&nbsp;    @Autowired
+&nbsp;    private ProductService productService;
+&nbsp;    @Autowired
+&nbsp;    private BrandService brandService;
+&nbsp;    @Autowired
+&nbsp;    private InventoryService inventoryService;
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public SalesReportData salesReport(ZonedDateTime start, ZonedDateTime end, String brand, String category) {
+<b class="fc">&nbsp;        HashMap&lt;String, SalesReportSingleRowData&gt; hashMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        int i = 0;</b>
+<b class="fc">&nbsp;        for (OrderPojo orderPojo : orderService.getOrdersBetweenDates(start, end)) {</b>
+<b class="nc">&nbsp;            Pair&lt;List&lt;OrderItemPojo&gt;, List&lt;ProductPojo&gt;&gt; pairedPojos = null;</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                pairedPojos = orderItemService.getByOrderId(orderPojo.getId());</b>
+<b class="nc">&nbsp;            } catch (ApiException e) {</b>
+&nbsp;                // can never happen
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            i = 0;</b>
+<b class="nc">&nbsp;            for (ProductPojo productPojo : pairedPojos.snd) {</b>
+<b class="nc">&nbsp;                BrandPojo brandPojo = brandService.getById(productPojo.getBrandCategory());</b>
+<b class="nc">&nbsp;                if ((Objects.equals(brand, &quot;&quot;) || Objects.equals(brand, brandPojo.getBrandName())) &amp;&amp;</b>
+<b class="nc">&nbsp;                        (Objects.equals(category, &quot;&quot;) || Objects.equals(category, brandPojo.getCategoryName()))) {</b>
+<b class="nc">&nbsp;                    SalesReportSingleRowData singleRowData = hashMap.get(brandPojo.getCategoryName());</b>
+<b class="nc">&nbsp;                    if (singleRowData == null) {</b>
+<b class="nc">&nbsp;                        singleRowData = new SalesReportSingleRowData();</b>
+<b class="nc">&nbsp;                        singleRowData.setCategory(brandPojo.getCategoryName());</b>
+<b class="nc">&nbsp;                        singleRowData.setQuantity(pairedPojos.fst.get(i).getQuantity());</b>
+<b class="nc">&nbsp;                        singleRowData.setRevenue(pairedPojos.fst.get(i).getQuantity() * pairedPojos.fst.get(i).getSellingPrice());</b>
+<b class="nc">&nbsp;                        hashMap.put(brandPojo.getCategoryName(), singleRowData);</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        singleRowData.setQuantity(singleRowData.getQuantity() + pairedPojos.fst.get(i).getQuantity());</b>
+<b class="nc">&nbsp;                        singleRowData.setRevenue(singleRowData.getRevenue() + pairedPojos.fst.get(i).getQuantity() * pairedPojos.fst.get(i).getSellingPrice());</b>
+&nbsp;                    }
+&nbsp;                }
+<b class="nc">&nbsp;                i++;</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        List&lt;SalesReportSingleRowData&gt; salesReportSingleRowDataList = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (HashMap.Entry&lt;String, SalesReportSingleRowData&gt; entry : hashMap.entrySet()) {</b>
+<b class="nc">&nbsp;            entry.getValue().setRevenue(BasicDataUtil.roundOffDouble(entry.getValue().getRevenue()));</b>
+<b class="nc">&nbsp;            salesReportSingleRowDataList.add(entry.getValue());</b>
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        SalesReportData salesReportData = new SalesReportData();</b>
+<b class="fc">&nbsp;        salesReportData.setSalesReportSingleRowDataList(salesReportSingleRowDataList);</b>
+<b class="fc">&nbsp;        return salesReportData;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public InventoryReportData inventoryReport() {
+<b class="fc">&nbsp;        Pair&lt;List&lt;InventoryPojo&gt;, List&lt;ProductPojo&gt;&gt; pairedPojoList = inventoryService.getAll();</b>
+<b class="fc">&nbsp;        int i = 0;</b>
+<b class="fc">&nbsp;        HashMap&lt;Integer, InventoryReportSingleRowData&gt; hashMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (InventoryPojo inventoryPojo : pairedPojoList.fst) {</b>
+<b class="nc">&nbsp;            BrandPojo brandPojo = brandService.getById(pairedPojoList.snd.get(i++).getBrandCategory());</b>
+<b class="nc">&nbsp;            InventoryReportSingleRowData singleRowData = hashMap.get(brandPojo.getId());</b>
+<b class="nc">&nbsp;            if (singleRowData == null) {</b>
+<b class="nc">&nbsp;                singleRowData = new InventoryReportSingleRowData();</b>
+<b class="nc">&nbsp;                singleRowData.setBrand(brandPojo.getBrandName());</b>
+<b class="nc">&nbsp;                singleRowData.setCategory(brandPojo.getCategoryName());</b>
+<b class="nc">&nbsp;                singleRowData.setQuantity(inventoryPojo.getQuantity());</b>
+<b class="nc">&nbsp;                hashMap.put(brandPojo.getId(), singleRowData);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                singleRowData.setQuantity(singleRowData.getQuantity() + inventoryPojo.getQuantity());</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        List&lt;InventoryReportSingleRowData&gt; inventoryReportSingleRowDataList = new ArrayList&lt;&gt;(hashMap.values());</b>
+<b class="fc">&nbsp;        InventoryReportData inventoryReportData = new InventoryReportData();</b>
+<b class="fc">&nbsp;        inventoryReportData.setInventoryReportSingleRowDataList(inventoryReportSingleRowDataList);</b>
+<b class="fc">&nbsp;        return inventoryReportData;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-06 16:40</div>
+</div>
+</body>
+</html>

@@ -1,7 +1,8 @@
-package com.increff.pos.dto;
+package com.increff.pos;
 
-import com.increff.pos.AbstractUnitTest;
 import com.increff.pos.constants.Const;
+import com.increff.pos.dto.BrandDto;
+import com.increff.pos.dto.ProductDto;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.ProductData;
 import com.increff.pos.model.forms.BrandForm;
@@ -29,7 +30,6 @@ public class ProductDtoTest extends AbstractUnitTest {
         List<ProductForm> rows = new ArrayList<>();
         for (int i = 0; i < Const.MAX_ROWS + 1; i++) {
             try {
-
                 BrandForm brandForm = new BrandForm();
                 brandForm.setBrandName("b" + i);
                 brandForm.setCategoryName("c");
@@ -63,6 +63,52 @@ public class ProductDtoTest extends AbstractUnitTest {
             throw e;
         }
     }
+
+    @Test(expected = ApiException.class)
+    public void testAddInvalidBC() throws ApiException {
+        ProductForm productForm = new ProductForm();
+        productForm.setBrandCategory(10);
+        productForm.setMrp(1.0755);
+        productForm.setName("p");
+        productForm.setBarcode("bc");
+        try {
+            productDto.add(List.of(productForm));
+        } catch (ApiException e) {
+            assertEquals(e.getMessage(), "Brand Category ID does not exists.\n");
+            throw e;
+        }
+    }
+
+    @Test(expected = ApiException.class)
+    public void testUpdateNullIDDup() throws ApiException {
+        BrandForm brandForm = new BrandForm();
+        brandForm.setCategoryName("c");
+        brandForm.setBrandName("b");
+        BrandPojo brandPojo = brandDto.add(List.of(brandForm)).get(0);
+        ProductForm productForm = new ProductForm();
+        productForm.setBrandCategory(10);
+        productForm.setMrp(1.0755);
+        productForm.setName("p");
+        productForm.setBarcode("bc");
+        int cnt = 0;
+        try {
+            productDto.update(10, productForm);
+        } catch (ApiException e) {
+            assertEquals(e.getMessage(), "Brand Category ID does not exists.\n");
+            cnt++;
+        }
+        productForm.setBrandCategory(brandPojo.getId());
+        try {
+            productDto.update(10, productForm);
+        } catch (ApiException e) {
+            assertEquals(e.getMessage(), "No product exists for this ID: 10");
+            cnt++;
+        }
+        if (cnt == 2) {
+            throw new ApiException("");
+        }
+    }
+
 
     @Test(expected = ApiException.class)
     public void testAddDtoEmptyNames() throws ApiException {

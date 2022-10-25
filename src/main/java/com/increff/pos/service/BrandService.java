@@ -42,13 +42,8 @@ public class BrandService {
     }
 
     @Transactional(rollbackFor = ApiException.class)
-    public void delete(int id) {
-        brandDao.delete(id);
-    }
-
-    @Transactional(rollbackFor = ApiException.class)
     public BrandPojo update(int id, BrandPojo brandPojo) throws ApiException {
-        BrandPojo existingPojo = brandDao.getById(id);
+        BrandPojo existingPojo = getById(id);
         if (existingPojo == null) {
             throw new ApiException("No Brand Category exists for this ID: " + id);
         }

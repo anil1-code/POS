@@ -46,10 +46,6 @@ public class ProductDto {
         return productService.add(ProductDtoHelper.convertToPojoList(productFormList));
     }
 
-    public void delete(int id) {
-        // productService.delete(id);
-    }
-
     public ProductPojo update(int id, ProductForm productForm) throws ApiException {
         ProductDtoHelper.validateAndNormalize(productForm);
         ProductPojo productPojo = ProductDtoHelper.convertToPojo(productForm);

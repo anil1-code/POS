@@ -49,6 +49,9 @@ public class OrderItemService {
             // inventory isn't sufficient
             throw new ApiException("Inventory is insufficient.\n");
         }
+        if (orderService.getById(orderItemPojo.getOrderId()) == null) {
+            throw new ApiException("Order doesn't exist.\n");
+        }
         if (orderItemDao.getByOrderIdAndProductId(orderItemPojo.getOrderId(), orderItemPojo.getProductId()) != null) {
             throw new ApiException("Product already exist in this order.\n");
         }
@@ -66,7 +69,13 @@ public class OrderItemService {
             // inventory isn't sufficient
             throw new ApiException("Inventory is insufficient.\n");
         }
+        if (orderService.getById(orderItemPojo.getOrderId()) == null) {
+            throw new ApiException("Order doesn't exist.\n");
+        }
         OrderItemPojo existingPojo = orderItemDao.getByOrderItemId(id);
+        if (existingPojo == null) {
+            throw new ApiException("Order Item doesn't exist.\n");
+        }
         existingPojo.setQuantity(orderItemPojo.getQuantity());
         existingPojo.setSellingPrice(orderItemPojo.getSellingPrice());
         return orderItemDao.update(existingPojo);
@@ -94,13 +103,6 @@ public class OrderItemService {
         ProductPojo productPojo = productService.getById(orderItemPojo.getProductId());
         return new Pair<>(orderItemPojo, productPojo);
     }
-
-//    @Transactional(rollbackFor = ApiException.class)
-//    public OrderItemPojo updateOrderId(int id, int orderId) throws ApiException {
-//        OrderItemPojo existingPojo = orderItemDao.getByOrderItemId(id);
-//        existingPojo.setOrderId(orderId);
-//        return existingPojo;
-//    }
 
     @Transactional(rollbackFor = ApiException.class)
     public void delete(int id) {

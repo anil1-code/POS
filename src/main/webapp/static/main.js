@@ -11,8 +11,9 @@ function highlightItem(head_name) {
     });
 }
 
-var base_url = "http://localhost:8000/pos";
-var MAX_LENGTH = 30;
+const base_url = "http://localhost:8000/pos";
+const MAX_LENGTH = 30;
+
 
 function createNewOrder() {
     // create an ajax call to create new order
@@ -66,6 +67,9 @@ function isNonNegInt(num) {
 
 function isNonNegNum(num) {
     num = String(num);
+    if(num.length === 0) {
+        return false;
+    }
     var cnt = 0;
     const DIGIT_EXPRESSION = /^\d$/;
     const isDigit = (character) => {
@@ -128,9 +132,4 @@ function inventoryReport() {
             showErrorToast(response.message);
         }
     });
-}
-
-function salesReport() {
-    console.log("sales");
-
 }

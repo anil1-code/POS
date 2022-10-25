@@ -1,7 +1,9 @@
-package com.increff.pos.dto;
+package com.increff.pos;
 
-import com.increff.pos.AbstractUnitTest;
 import com.increff.pos.constants.Const;
+import com.increff.pos.dto.BrandDto;
+import com.increff.pos.dto.InventoryDto;
+import com.increff.pos.dto.ProductDto;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.InventoryData;
 import com.increff.pos.model.forms.BrandForm;

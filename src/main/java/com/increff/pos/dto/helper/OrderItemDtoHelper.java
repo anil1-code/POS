@@ -42,24 +42,18 @@ public class OrderItemDtoHelper {
 
     public static String validate(OrderItemForm orderItemForm) {
         StringBuilder errorMsg = new StringBuilder();
-        if (orderItemForm.getOrderId() == null) {
-            errorMsg.append("Missing OrderID, ");
+        if (orderItemForm.getQuantity() <= 0) {
+            errorMsg.append("Quantity should not be less than 1, ");
         }
-        if (orderItemForm.getProductId() == null) {
-            errorMsg.append("Missing ProductID, ");
+        orderItemForm.setSellingPrice(BasicDataUtil.roundOffDouble(orderItemForm.getSellingPrice()));
+        if (orderItemForm.getSellingPrice() < 0) {
+            errorMsg.append("Price should not be negative, ");
         }
-        if (orderItemForm.getQuantity() == null) {
-            errorMsg.append("Missing Quantity, ");
-        } else if (orderItemForm.getQuantity() == 0) {
-            errorMsg.append("Quantity should not be zero, ");
+        if (orderItemForm.getProductId() <= 0) {
+            errorMsg.append("Product Id should not be negative, ");
         }
-        if (orderItemForm.getSellingPrice() == null) {
-            errorMsg.append("Missing Selling Price, ");
-        } else {
-            orderItemForm.setSellingPrice(BasicDataUtil.roundOffDouble(orderItemForm.getSellingPrice()));
-            if (orderItemForm.getSellingPrice() == 0) {
-                errorMsg.append("Price should not be zero, ");
-            }
+        if (orderItemForm.getOrderId() <= 0) {
+            errorMsg.append("Order Id should not be negative, ");
         }
         if (errorMsg.length() != 0) {
             errorMsg.deleteCharAt(errorMsg.length() - 1);

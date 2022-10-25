@@ -3,7 +3,6 @@ package com.increff.pos.dao;
 import com.increff.pos.pojo.BrandPojo;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
@@ -35,12 +34,6 @@ public class BrandDao extends AbstractDao {
     public BrandPojo add(BrandPojo brandPojo) {
         em().persist(brandPojo);
         return brandPojo;
-    }
-
-    public void delete(int id) {
-        Query query = em().createQuery(deleteById);
-        query.setParameter("id", id);
-        query.executeUpdate();
     }
 
     public BrandPojo update(BrandPojo brandPojo) {

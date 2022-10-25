@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -54,14 +55,6 @@ public class OrderController {
     @ApiOperation(value = "generate the invoice")
     @RequestMapping(value = "/invoice/{orderId}", method = RequestMethod.GET)
     public void generateInvoice(@PathVariable int orderId, HttpServletResponse response) throws ApiException {
-        try {
-            File document = orderDto.generateInvoice(orderId);
-            InputStream is = new FileInputStream(document);
-            ByteStreams.copy(is, response.getOutputStream());
-            response.setContentType("application/pdf");
-            response.flushBuffer();
-        } catch (IOException e) {
-            throw new ApiException("Error while invoice generation");
-        }
+        orderDto.generateInvoice(orderId, response);
     }
 }

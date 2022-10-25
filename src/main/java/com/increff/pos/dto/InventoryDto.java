@@ -31,7 +31,7 @@ public class InventoryDto {
      */
     public List<InventoryPojo> add(List<InventoryForm> inventoryFormList) throws ApiException {
         if (inventoryFormList.size() > Const.MAX_ROWS) {
-            throw new ApiException("Number of data rows exceeds the max limit.");
+            throw new ApiException("Number of rows exceeds the max limit.");
         }
         StringBuilder errorMsg = new StringBuilder();
         int row = 1;
@@ -48,10 +48,6 @@ public class InventoryDto {
             throw new ApiException(errorMsg.toString());
         }
         return inventoryService.add(InventoryDtoHelper.convertToPojoList(inventoryFormList));
-    }
-
-    public void delete(int id) {
-        inventoryService.delete(id);
     }
 
     public InventoryPojo update(int id, InventoryForm inventoryForm) throws ApiException {
