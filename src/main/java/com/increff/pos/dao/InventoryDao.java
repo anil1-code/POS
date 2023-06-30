@@ -12,6 +12,7 @@ public class InventoryDao extends AbstractDao {
     private static final String deleteById = "delete from InventoryPojo p where productId=:productId";
     private static final String selectById = "select p from InventoryPojo p where productId=:productId";
     private static final String selectAll = "select p from InventoryPojo p";
+
     public List<InventoryPojo> getAll() {
         TypedQuery<InventoryPojo> query = getQuery(selectAll, InventoryPojo.class);
         return query.getResultList();

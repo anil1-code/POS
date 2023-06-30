@@ -5,157 +5,163 @@
 
 <body>
 
-    <nav th:replace="templates.html :: common_navbar"></nav>
-    <div th:replace="templates.html :: general_toast"></div>
-    <table class="table table-striped" id="product-table" style="width: 80vw; margin-left: 10vw;">
-        <thead>
-            <tr>
-                <th scope="col" colspan="2">
-                    <div class="form-group">
-                        <label for="inputName" class="col-form-label">Name:</label>
-                        <div class="input-text">
-                            <input type="text" class="form-control" name="productName" id="inputName" maxlength="30"
-                                placeholder="Enter Product name">
-                        </div>
-                    </div>
-                </th>
-                <th scope="col">
-                    <div class="form-group" id="add-barcode-input">
-                        <label for="inputBarcode" class="col-form-label">Barcode:</label>
-                        <div class="input-text">
-                            <input type="text" class="form-control" name="barcode" id="inputBarcode" maxlength="30"
-                                placeholder="Enter barcode">
-                        </div>
-                    </div>
-                </th>
-                <th scope="col" colspan="2">
-                    <div style="margin-bottom: 15px;" class="form-group">
-                        <select class="form-select" aria-label="Default select example" style="padding-top: 6px;
+<nav th:replace="templates.html :: common_navbar"></nav>
+<div th:replace="templates.html :: general_toast"></div>
+<table class="table table-striped" id="product-table" style="width: 80vw; margin-left: 10vw;">
+    <thead>
+    <tr>
+        <th scope="col" colspan="2">
+            <div class="form-group">
+                <label for="inputName" class="col-form-label">Name:</label>
+                <div class="input-text">
+                    <input type="text" class="form-control" name="productName" id="inputName" maxlength="30"
+                           placeholder="Enter Product name">
+                </div>
+            </div>
+        </th>
+        <th scope="col">
+            <div class="form-group" id="add-barcode-input">
+                <label for="inputBarcode" class="col-form-label">Barcode:</label>
+                <div class="input-text">
+                    <input type="text" class="form-control" name="barcode" id="inputBarcode" maxlength="30"
+                           placeholder="Enter barcode">
+                </div>
+            </div>
+        </th>
+        <th scope="col" colspan="2">
+            <div style="margin-bottom: 15px;" class="form-group">
+                <select class="form-select" aria-label="Default select example" style="padding-top: 6px;
                                         padding-right: 12px;
                                         padding-bottom: 6px;
                                         padding-left: 12px;
                                         margin-top: -39px;
                                         font-size: 14px;
                                         width: 230px;" id="brand_cat_id_dropdown">
-                            <option selected>Select Brand Category</option>
-                            <option value="1">One</option>
-                        </select>
-                    </div>
-                </th>
-                <th scope="col" style="min-width: 165px; max-width: 165px;">
-                    <div class="form-group" id="add-mrp">
-                        <label for="inputMrp" class="col-form-label">MRP:</label>
-                        <div class="input-text">
-                            <input type="number" class="form-control" name="mrp" id="inputMrp" placeholder="Enter MRP">
-                        </div>
-                    </div>
-                </th>
-                <th scope="col" style="min-width: 225px; max-width: 225px;">
-                    <div class="form-group">
-                        <button type="button" class="btn btn-primary" id="add-product"
-                            onclick="addProduct()">Add</button>
-                        &nbsp;
-                        <button type="button" class="btn btn-primary" id="bulk-add-product"
-                            onclick="showBulkUploadDialog()">Bulk Add</button>
-                        &nbsp;
-                        <button type="button" class="btn btn-default btn-circle btn-sm" id="refresh-data"
-                            onclick="fetchAndDisplayProductsAndBrands()" style="font-size: 20px;">&#x27F3;</button>
-                    </div>
-                </th>
-            </tr>
-        </thead>
+                    <option selected>Select Brand Category</option>
+                    <option value="1">One</option>
+                </select>
+            </div>
+        </th>
+        <th scope="col" style="min-width: 165px; max-width: 165px;">
+            <div class="form-group" id="add-mrp">
+                <label for="inputMrp" class="col-form-label">MRP:</label>
+                <div class="input-text">
+                    <input type="number" class="form-control" name="mrp" id="inputMrp" placeholder="Enter MRP">
+                </div>
+            </div>
+        </th>
+        <th scope="col" style="min-width: 225px; max-width: 225px;">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="add-product"
+                        onclick="addProduct()">Add
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-primary" id="bulk-add-product"
+                        onclick="showBulkUploadDialog()">Bulk Add
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-default btn-circle btn-sm" id="refresh-data"
+                        onclick="fetchAndDisplayProductsAndBrands()" style="font-size: 20px;">&#x27F3;
+                </button>
+            </div>
+        </th>
+    </tr>
+    </thead>
 
-        <tbody>
-            <tr>
-                <th scope="col">S.no</th>
-                <th scope="col">Product Name</th>
-                <th scope="col">Product Barcode</th>
-                <th scope="col">Brand</th>
-                <th scope="col">Category</th>
-                <th scope="col">MRP</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </tbody>
-    </table>
+    <tbody>
+    <tr>
+        <th scope="col">S.no</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Product Barcode</th>
+        <th scope="col">Brand</th>
+        <th scope="col">Category</th>
+        <th scope="col">MRP</th>
+        <th scope="col">Actions</th>
+    </tr>
+    </tbody>
+</table>
 
-    <!-- Product Bulk Upload Modal -->
-    <div class="modal" tabindex="-1" role="dialog" id="product-bulk-upload-modal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <p class="modal-title" style="font-size: large;">Upload Products via file</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
+<!-- Product Bulk Upload Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="product-bulk-upload-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" style="font-size: large;">Upload Products via file</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="brands-file">
+                    <input type="file" class="custom-file-input" id="productFile">
+                    <label class="custom-file-label" for="productFile" id="productFileName">Choose
+                        file</label>
                 </div>
-                <div class="modal-body">
-                    <div class="brands-file">
-                        <input type="file" class="custom-file-input" id="productFile">
-                        <label class="custom-file-label" for="productFile" id="productFileName">Choose
-                            file</label>
-                    </div>
-                    <a href="static/products.tsv" target="_blank">Download Sample</a>
-                    <br>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="process-product-data" dataid=""
-                        onclick="processData()">Upload</button>
-                    <button type="button" class="btn btn-warning" id="download-errors" data-error=""
-                        onclick="downloadErrors(this)">Download Errors</button>
-                </div>
+                <a href="static/products.tsv" target="_blank">Download Sample</a>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="process-product-data" dataid=""
+                        onclick="processData()">Upload
+                </button>
+                <button type="button" class="btn btn-warning" id="download-errors" data-error=""
+                        onclick="downloadErrors(this)">Download Errors
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Product Edit Modal -->
-    <div class="modal" tabindex="-1" role="dialog" id="edit-product-modal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <p class="modal-title" style="font-size: large;">Edit Product</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form class="form-inline" id="product-edit-form">
-                        <div class="form-group">
-                            <label for="inputEditName" class="col-form-label">Name</label>
-                            <div class="input-text">
-                                <input type="text" class="form-control" name="productName" id="inputEditName"
-                                    placeholder="Enter product name" maxlength="30" style="margin-left: 22px;">
-                            </div>
+<!-- Product Edit Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="edit-product-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" style="font-size: large;">Edit Product</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline" id="product-edit-form">
+                    <div class="form-group">
+                        <label for="inputEditName" class="col-form-label">Name</label>
+                        <div class="input-text">
+                            <input type="text" class="form-control" name="productName" id="inputEditName"
+                                   placeholder="Enter product name" maxlength="30" style="margin-left: 22px;">
                         </div>
-                        <div class="form-group" id="bc-id-input" style="margin-top: 12px;">
-                            <label for="inputEditMrp" class="col-form-label">Mrp</label>
-                            <div class="input-text">
-                                <input type="number" class="form-control" name="mrp" id="inputEditMrp"
-                                    placeholder="Enter mrp" style="margin-left: 36px;">
-                            </div>
+                    </div>
+                    <div class="form-group" id="bc-id-input" style="margin-top: 12px;">
+                        <label for="inputEditMrp" class="col-form-label">Mrp</label>
+                        <div class="input-text">
+                            <input type="number" class="form-control" name="mrp" id="inputEditMrp"
+                                   placeholder="Enter mrp" style="margin-left: 36px;">
                         </div>
-                        <div></div>
-                        <div style="margin-top: 12px;" class="form-group">
-                            <select class="form-select" aria-label="Default select example" style="padding-top: 6px;
+                    </div>
+                    <div></div>
+                    <div style="margin-top: 12px;" class="form-group">
+                        <select class="form-select" aria-label="Default select example" style="padding-top: 6px;
                                     padding-right: 12px;
                                     padding-bottom: 6px;
                                     padding-left: 12px;
                                     margin-top: 4px;
                                     font-size: 14px;
                                     width: 400px;" id="brand_cat_id_edit_dropdown">
-                                <option selected>Select Brand Category</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="updateProduct()" id="product-update"
-                        data-id="">Update</button>
-                </div>
+                            <option selected>Select Brand Category</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateProduct()" id="product-update"
+                        data-id="">Update
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <footer th:replace="templates.html :: common_footer"></footer>
+<footer th:replace="templates.html :: common_footer"></footer>
 
 </body>
 

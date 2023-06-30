@@ -4,51 +4,51 @@
 <head th:replace="templates.html :: common_head"></head>
 
 <body>
-    <nav th:replace="templates.html :: common_navbar"></nav>
-    <div th:replace="templates.html :: general_toast"></div>
-    <table id="order-table" class="table table-striped" style="width: 80vw; margin-left: 10vw;">
-        <thead>
-            <tr>
-                <th scope="col">S.no</th>
-                <th scope="col">Order Id</th>
-                <th scope="col">Time</th>
-                <th scope="col">Actions</th>
-                <th scope="col">View Items</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+<nav th:replace="templates.html :: common_navbar"></nav>
+<div th:replace="templates.html :: general_toast"></div>
+<table id="order-table" class="table table-striped" style="width: 80vw; margin-left: 10vw;">
+    <thead>
+    <tr>
+        <th scope="col">S.no</th>
+        <th scope="col">Order Id</th>
+        <th scope="col">Time</th>
+        <th scope="col">Actions</th>
+        <th scope="col">View Items</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
 
-    <div class="modal" tabindex="-1" role="dialog" id="show-order-items-modal" style="width: 80vw; margin-left: 10vw;">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <p class="modal-title" style="font-size: large;">Order Items</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-striped" id="show-order-items-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">S.no</th>
-                                <th scope="col">Product Name</th>
-                                <th scope="col">Barcode</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Selling Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+<div class="modal" tabindex="-1" role="dialog" id="show-order-items-modal" style="width: 80vw; margin-left: 10vw;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" style="font-size: large;">Order Items</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" id="show-order-items-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">S.no</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Barcode</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Selling Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
 
-    <footer th:replace="templates.html :: common_footer"></footer>
+<footer th:replace="templates.html :: common_footer"></footer>
 </body>
 <script th:src="@{/static/view-orders.js}"></script>
 

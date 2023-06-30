@@ -4,34 +4,35 @@
 <head th:replace="templates.html :: common_head"></head>
 
 <body>
-    <nav th:replace="templates.html :: common_navbar"></nav>
-    <div th:replace="templates.html :: general_toast"></div>
+<nav th:replace="templates.html :: common_navbar"></nav>
+<div th:replace="templates.html :: general_toast"></div>
 
-    <div style="margin-top: 2vw; margin-left: 8vw">
-        <!-- <p style="font-size: 32px;">Sales Report</p> -->
-        <label for="start-date" style="font-size: 24px;">Start Date:</label>
-        &nbsp;
-        <input type="date" id="start-date">
-        &nbsp;&nbsp;&nbsp;
-        <label for="end-date" style="font-size: 24px;">End Date:</label>
-        &nbsp;
-        <input type="date" id="end-date">
-        &nbsp;&nbsp;&nbsp;
-        <select class="form-select" aria-label="Default select example"
+<div style="margin-top: 2vw; margin-left: 8vw">
+    <!-- <p style="font-size: 32px;">Sales Report</p> -->
+    <label for="start-date" style="font-size: 24px;">Start Date:</label>
+    &nbsp;
+    <input type="date" id="start-date">
+    &nbsp;&nbsp;&nbsp;
+    <label for="end-date" style="font-size: 24px;">End Date:</label>
+    &nbsp;
+    <input type="date" id="end-date">
+    &nbsp;&nbsp;&nbsp;
+    <select class="form-select" aria-label="Default select example"
             style="display: inline-block; width: fit-content; font-size: 20px;" id="brand_dropdown">
-            <option selected>Select Brand</option>
-            <option value="1">One</option>
-        </select>
-        &nbsp;&nbsp;&nbsp;
-        <select class="form-select" aria-label="Default select example"
+        <option selected>Select Brand</option>
+        <option value="1">One</option>
+    </select>
+    &nbsp;&nbsp;&nbsp;
+    <select class="form-select" aria-label="Default select example"
             style="display: inline-block; width: fit-content; font-size: 20px;" id="category_dropdown">
-            <option selected>Select Category</option>
-            <option value="1">One</option>
-        </select>
-    </div>
-    <button type="button" class="btn btn-primary" id="addOrderItem" style="margin-top: 1vw; margin-left: 8vw;"
-        onclick="salesReport()">Download Sales Report</button>
-    <footer th:replace="templates.html :: common_footer"></footer>
+        <option selected>Select Category</option>
+        <option value="1">One</option>
+    </select>
+</div>
+<button type="button" class="btn btn-primary" id="addOrderItem" style="margin-top: 1vw; margin-left: 8vw;"
+        onclick="salesReport()">Download Sales Report
+</button>
+<footer th:replace="templates.html :: common_footer"></footer>
 </body>
 <script>
     $.ajax({
@@ -163,6 +164,7 @@
             }
         });
     }
+
 </script>
 
 </html>

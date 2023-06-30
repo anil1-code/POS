@@ -44,7 +44,7 @@ public class InventoryDto {
             }
             row++;
         }
-        if (errorMsg.length()  !=0) {
+        if (errorMsg.length() != 0) {
             throw new ApiException(errorMsg.toString());
         }
         return inventoryService.add(InventoryDtoHelper.convertToPojoList(inventoryFormList));

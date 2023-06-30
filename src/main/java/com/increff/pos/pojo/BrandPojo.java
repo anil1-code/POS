@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 //@Table(name = "brand_category", indexes = @Index(columnList = "brand,category", unique = true))
-@Table(uniqueConstraints = {@UniqueConstraint(name = "brand_cat_combo", columnNames = {"brandName","categoryName"})})
+@Table(uniqueConstraints = {@UniqueConstraint(name = "brand_cat_combo", columnNames = {"brandName", "categoryName"})})
 public class BrandPojo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

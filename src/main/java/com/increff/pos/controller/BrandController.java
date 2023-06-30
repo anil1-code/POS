@@ -5,8 +5,6 @@ import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.BrandData;
 import com.increff.pos.model.forms.BrandForm;
 import com.increff.pos.pojo.BrandPojo;
-import com.increff.pos.pojo.OrderPojo;
-import com.increff.pos.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import java.util.List;
 public class BrandController {
     @Autowired
     private BrandDto brandDto;
+
     @ApiOperation(value = "get all brand category pairs")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<BrandData> getAll() {

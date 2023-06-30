@@ -4,126 +4,131 @@
 <head th:replace="templates.html :: common_head"></head>
 
 <body>
-    <nav th:replace="templates.html :: common_navbar"></nav>
-    <div th:replace="templates.html :: general_toast"></div>
+<nav th:replace="templates.html :: common_navbar"></nav>
+<div th:replace="templates.html :: general_toast"></div>
 
-    <table class="table table-striped" id="order-item-table" style="width: 80vw; margin-left: 10vw;">
-        <thead>
-            <tr>
-                <th scope="col" colspan="3">
-                    <div style="margin-bottom: 15px;" class="form-group">
-                        <!-- put name as well as barcode in this -->
-                        <select class="form-select" aria-label="Default select example" style="padding-top: 6px;
+<table class="table table-striped" id="order-item-table" style="width: 80vw; margin-left: 10vw;">
+    <thead>
+    <tr>
+        <th scope="col" colspan="3">
+            <div style="margin-bottom: 15px;" class="form-group">
+                <!-- put name as well as barcode in this -->
+                <select class="form-select" aria-label="Default select example" style="padding-top: 6px;
                                                     padding-right: 12px;
                                                     padding-bottom: 6px;
                                                     padding-left: 12px;
                                                     margin-top: -34px;
                                                     font-size: 14px; " id="product_id_dropdown">
-                            <option selected>Select Product</option>
-                            <option value="1">One</option>
-                        </select>
-                    </div>
-                </th>
+                    <option selected>Select Product</option>
+                    <option value="1">One</option>
+                </select>
+            </div>
+        </th>
 
-                <th scope="col" style="width: 250px;">
+        <th scope="col" style="width: 250px;">
+            <div class="form-group">
+                <label for="inputQuantity" class="col-form-label">Quantity:</label>
+                <div class="input-text">
+                    <input type="number" class="form-control" name="quantity" id="inputQuantity"
+                           placeholder="Enter Quantity">
+                </div>
+            </div>
+        </th>
+
+        <th scope="col" style="width: 300px;">
+            <div class="form-group">
+                <label for="inputSP" class="col-form-label">Selling Price:</label>
+                <div class="input-text">
+                    <input type="number" class="form-control" name="sp" id="inputSP"
+                           placeholder="Enter Selling Price">
+                </div>
+            </div>
+        </th>
+
+        <th scope="col">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="addOrderItem"
+                        onclick="addOrderItem()">Add
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-default btn-circle btn-sm" style="font-size: 20px;"
+                        id="refresh-data" onclick="fetchAndDisplayOrderItemsAndProducts()">&#x27F3;
+                </button>
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="col">S.no</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Product Barcode</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Selling Price</th>
+        <th scope="col">Actions</th>
+    </tr>
+    </tbody>
+</table>
+
+<!-- order item update modal -->
+<div class="modal" tabindex="-1" role="dialog" id="edit-order-item-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" style="font-size: large;">Edit Order Item</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline" id="order-item-edit-form">
                     <div class="form-group">
-                        <label for="inputQuantity" class="col-form-label">Quantity:</label>
+                        <label for="inputEditProduct" class="col-form-label"
+                               style="width: 110px; text-align: center;">Product Name:</label>
                         <div class="input-text">
-                            <input type="number" class="form-control" name="quantity" id="inputQuantity"
-                                placeholder="Enter Quantity">
+                            <input type="text" class="form-control" name="productName" id="inputEditProduct"
+                                   placeholder="Enter product name">
                         </div>
                     </div>
-                </th>
-
-                <th scope="col" style="width: 300px;">
-                    <div class="form-group">
-                        <label for="inputSP" class="col-form-label">Selling Price:</label>
+                    <div class="form-group" id="add-edit-quantity" style="margin-top: 10px;">
+                        <label for="inputEditQuantity" class="col-form-label"
+                               style="width: 110px; text-align: center;">Quantity:</label>
                         <div class="input-text">
-                            <input type="number" class="form-control" name="sp" id="inputSP"
-                                placeholder="Enter Selling Price">
+                            <input type="number" class="form-control" name="quantity" id="inputEditQuantity"
+                                   placeholder="Enter Quantity">
                         </div>
                     </div>
-                </th>
-
-                <th scope="col">
-                    <div class="form-group">
-                        <button type="button" class="btn btn-primary" id="addOrderItem"
-                            onclick="addOrderItem()">Add</button>
-                        &nbsp;
-                        <button type="button" class="btn btn-default btn-circle btn-sm" style="font-size: 20px;"
-                            id="refresh-data" onclick="fetchAndDisplayOrderItemsAndProducts()">&#x27F3;</button>
+                    <div class="form-group" id="add-edit-mrp" style="margin-top: 10px;">
+                        <label for="inputEditSP" class="col-form-label"
+                               style="width: 110px; text-align: center;">Selling Price:</label>
+                        <div class="input-text">
+                            <input type="number" class="form-control" name="mrp" id="inputEditSP"
+                                   placeholder="Enter Selling Price">
+                        </div>
                     </div>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="col">S.no</th>
-                <th scope="col">Product Name</th>
-                <th scope="col">Product Barcode</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Selling Price</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- order item update modal -->
-    <div class="modal" tabindex="-1" role="dialog" id="edit-order-item-modal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <p class="modal-title" style="font-size: large;">Edit Order Item</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form class="form-inline" id="order-item-edit-form">
-                        <div class="form-group">
-                            <label for="inputEditProduct" class="col-form-label"
-                                style="width: 110px; text-align: center;">Product Name:</label>
-                            <div class="input-text">
-                                <input type="text" class="form-control" name="productName" id="inputEditProduct"
-                                    placeholder="Enter product name">
-                            </div>
-                        </div>
-                        <div class="form-group" id="add-edit-quantity" style="margin-top: 10px;">
-                            <label for="inputEditQuantity" class="col-form-label"
-                                style="width: 110px; text-align: center;">Quantity:</label>
-                            <div class="input-text">
-                                <input type="number" class="form-control" name="quantity" id="inputEditQuantity"
-                                    placeholder="Enter Quantity">
-                            </div>
-                        </div>
-                        <div class="form-group" id="add-edit-mrp" style="margin-top: 10px;">
-                            <label for="inputEditSP" class="col-form-label"
-                                style="width: 110px; text-align: center;">Selling Price:</label>
-                            <div class="input-text">
-                                <input type="number" class="form-control" name="mrp" id="inputEditSP"
-                                    placeholder="Enter Selling Price">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="order-item-update" data-id=""
-                        onclick="updateOrderItem(this)">Update</button>
-                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="order-item-update" data-id=""
+                        onclick="updateOrderItem(this)">Update
+                </button>
             </div>
         </div>
     </div>
+</div>
 
 
-    <footer th:replace="templates.html :: common_footer"></footer>
+<footer th:replace="templates.html :: common_footer"></footer>
 
 
-    <div style="position: fixed; bottom: 0; right: 0; left: 0; padding: 1vw 0vw 1vw 70vw; background-color: #e9ecef;">
-        <button type="button" class="btn btn-primary" id="placeOrder" onclick="placeOrder()"
-            style="font-size: 20px;">Place Order</button>
-        <button type="button" class="btn btn-warning" id="clearAll" onclick="clearAll()" style="font-size: 20px;">Clear
-            All</button>
-    </div>
+<div style="position: fixed; bottom: 0; right: 0; left: 0; padding: 1vw 0vw 1vw 70vw; background-color: #e9ecef;">
+    <button type="button" class="btn btn-primary" id="placeOrder" onclick="placeOrder()"
+            style="font-size: 20px;">Place Order
+    </button>
+    <button type="button" class="btn btn-warning" id="clearAll" onclick="clearAll()" style="font-size: 20px;">Clear
+        All
+    </button>
+</div>
 
 
 </body>

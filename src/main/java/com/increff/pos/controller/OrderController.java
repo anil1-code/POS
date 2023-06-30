@@ -1,6 +1,5 @@
 package com.increff.pos.controller;
 
-import com.google.common.io.ByteStreams;
 import com.increff.pos.dto.OrderDto;
 import com.increff.pos.exception.ApiException;
 import com.increff.pos.model.data.OrderData;
@@ -14,11 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 @Api
