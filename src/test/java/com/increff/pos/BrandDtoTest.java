@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -152,7 +153,7 @@ public class BrandDtoTest extends AbstractUnitTest {
         brandForm.setBrandName("b");
         brandForm.setCategoryName("c");
         try {
-            List<BrandPojo> brandPojoList = brandDto.add(new ArrayList<>(List.of(brandForm)));
+            List<BrandPojo> brandPojoList = brandDto.add(Collections.singletonList(brandForm));
             assertNotEquals(brandPojoList, null);
             assertEquals(brandPojoList.size(), 1);
             BrandForm ub = new BrandForm();

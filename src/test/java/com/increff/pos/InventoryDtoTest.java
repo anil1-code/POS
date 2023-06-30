@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -77,20 +78,20 @@ public class InventoryDtoTest extends AbstractUnitTest {
             BrandForm brandForm = new BrandForm();
             brandForm.setBrandName("b");
             brandForm.setCategoryName("c");
-            BrandPojo brandPojo = brandDto.add(List.of(brandForm)).get(0);
+            BrandPojo brandPojo = brandDto.add(Collections.singletonList(brandForm)).get(0);
             ProductForm productForm = new ProductForm();
             productForm.setName("p");
             productForm.setBarcode("bc");
             productForm.setBrandCategory(brandPojo.getId());
             productForm.setMrp(1.0755);
-            productPojo = productDto.add(List.of(productForm)).get(0);
+            productPojo = productDto.add(Collections.singletonList(productForm)).get(0);
         } catch (ApiException e) {
             fail();
         }
         InventoryForm inventoryForm = new InventoryForm();
         inventoryForm.setQuantity(1);
         inventoryForm.setProductId(productPojo.getId());
-        InventoryPojo inventoryPojo = inventoryDto.add(List.of(inventoryForm)).get(0);
+        InventoryPojo inventoryPojo = inventoryDto.add(Collections.singletonList(inventoryForm)).get(0);
         InventoryData inventoryData = inventoryDto.getAll().get(0);
         assertEquals(inventoryData.getQuantity(), Integer.valueOf(1));
         inventoryForm.setQuantity(2);

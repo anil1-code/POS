@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -33,7 +34,7 @@ public class ProductDtoTest extends AbstractUnitTest {
                 BrandForm brandForm = new BrandForm();
                 brandForm.setBrandName("b" + i);
                 brandForm.setCategoryName("c");
-                BrandPojo brandPojo = brandDto.add(List.of(brandForm)).get(0);
+                BrandPojo brandPojo = brandDto.add(Collections.singletonList(brandForm)).get(0);
                 ProductForm productForm = new ProductForm();
                 productForm.setName("p");
                 productForm.setMrp(100.0d);
@@ -72,7 +73,7 @@ public class ProductDtoTest extends AbstractUnitTest {
         productForm.setName("p");
         productForm.setBarcode("bc");
         try {
-            productDto.add(List.of(productForm));
+            productDto.add(Collections.singletonList(productForm));
         } catch (ApiException e) {
             assertEquals(e.getMessage(), "Brand Category ID does not exists.\n");
             throw e;
@@ -84,7 +85,7 @@ public class ProductDtoTest extends AbstractUnitTest {
         BrandForm brandForm = new BrandForm();
         brandForm.setCategoryName("c");
         brandForm.setBrandName("b");
-        BrandPojo brandPojo = brandDto.add(List.of(brandForm)).get(0);
+        BrandPojo brandPojo = brandDto.add(Collections.singletonList(brandForm)).get(0);
         ProductForm productForm = new ProductForm();
         productForm.setBrandCategory(10);
         productForm.setMrp(1.0755);
@@ -118,7 +119,7 @@ public class ProductDtoTest extends AbstractUnitTest {
             BrandForm brandForm = new BrandForm();
             brandForm.setBrandName("b");
             brandForm.setCategoryName("c");
-            BrandPojo brandPojo = brandDto.add(List.of(brandForm)).get(0);
+            BrandPojo brandPojo = brandDto.add(Collections.singletonList(brandForm)).get(0);
             productForm.setBarcode("");
             productForm.setName("");
             productForm.setMrp(-0.10999);
@@ -127,7 +128,7 @@ public class ProductDtoTest extends AbstractUnitTest {
             fail();
         }
         try {
-            productDto.add(List.of(productForm));
+            productDto.add(Collections.singletonList(productForm));
         } catch (ApiException e) {
             assertEquals(e.getMessage(), "Product name cannot be empty, Product barcode cannot be empty, Product MRP cannot be negative.\n");
             throw e;
@@ -141,7 +142,7 @@ public class ProductDtoTest extends AbstractUnitTest {
         brandForm.setCategoryName("c");
         ProductForm productForm = new ProductForm();
         try {
-            BrandPojo brandPojo = brandDto.add(List.of(brandForm)).get(0);
+            BrandPojo brandPojo = brandDto.add(Collections.singletonList(brandForm)).get(0);
             for (int i = -1; i < Const.MAX_LENGTH; i++) {
                 productForm.setName(productForm.getName() + "p");
                 productForm.setBarcode(productForm.getBarcode() + "b");
@@ -152,7 +153,7 @@ public class ProductDtoTest extends AbstractUnitTest {
             fail();
         }
         try {
-            productDto.add(List.of(productForm));
+            productDto.add(Collections.singletonList(productForm));
         } catch (ApiException e) {
             assertEquals(e.getMessage(), "Product name should not exceed the maximum length(" + Const.MAX_LENGTH + "), Product barcode should not exceed the maximum length(" + Const.MAX_LENGTH + ").\n");
             throw e;
@@ -166,12 +167,12 @@ public class ProductDtoTest extends AbstractUnitTest {
         brandForm.setCategoryName("c");
         ProductForm productForm = new ProductForm();
         try {
-            BrandPojo brandPojo = brandDto.add(List.of(brandForm)).get(0);
+            BrandPojo brandPojo = brandDto.add(Collections.singletonList(brandForm)).get(0);
             productForm.setMrp(1.07555d);
             productForm.setBarcode("  B  B  ");
             productForm.setBrandCategory(brandPojo.getId());
             productForm.setName("  P  P  ");
-            List<ProductPojo> productPojoList = productDto.add(List.of(productForm));
+            List<ProductPojo> productPojoList = productDto.add(Collections.singletonList(productForm));
             assertNotEquals(productPojoList, null);
             assertEquals(productPojoList.size(), 1);
             assertEquals(productPojoList.get(0).getName(), "p  p");
@@ -188,13 +189,13 @@ public class ProductDtoTest extends AbstractUnitTest {
         brandForm.setBrandName("b");
         brandForm.setCategoryName("c");
         try {
-            BrandPojo brandPojo = brandDto.add(List.of(brandForm)).get(0);
+            BrandPojo brandPojo = brandDto.add(Collections.singletonList(brandForm)).get(0);
             ProductForm productForm = new ProductForm();
             productForm.setMrp(1.07555d);
             productForm.setBarcode("b");
             productForm.setBrandCategory(brandPojo.getId());
             productForm.setName("p");
-            productDto.add(List.of(productForm));
+            productDto.add(Collections.singletonList(productForm));
             List<ProductData> productDataList = productDto.getAll();
             assertNotEquals(productDataList, null);
             assertEquals(productDataList.size(), 1);
@@ -215,13 +216,13 @@ public class ProductDtoTest extends AbstractUnitTest {
         brandForm.setBrandName("b");
         brandForm.setCategoryName("c");
         try {
-            BrandPojo brandPojo = brandDto.add(List.of(brandForm)).get(0);
+            BrandPojo brandPojo = brandDto.add(Collections.singletonList(brandForm)).get(0);
             ProductForm productForm = new ProductForm();
             productForm.setName("p");
             productForm.setBarcode("b");
             productForm.setMrp(1.075);
             productForm.setBrandCategory(brandPojo.getId());
-            ProductPojo productPojo = productDto.add(List.of(productForm)).get(0);
+            ProductPojo productPojo = productDto.add(Collections.singletonList(productForm)).get(0);
             productForm.setName("up");
             productForm.setMrp(1.0755d);
             productPojo = productDto.update(productPojo.getId(), productForm);
